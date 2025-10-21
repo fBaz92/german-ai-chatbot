@@ -1,0 +1,458 @@
+Verbo,Regolare,Significato,Präteritum,Participio passato,Perfetto,Caso,Riflessivo,Frequenza
+sein,no,essere,war,gewesen,ist gewesen,-,no,1
+haben,no,avere,hatte,gehabt,hat gehabt,Akkusativ,no,1
+werden,no,diventare,wurde,geworden,ist geworden,Nominativ,no,1
+können,no,potere,konnte,gekonnt,hat gekonnt,Akkusativ,no,1
+müssen,no,dovere,musste,gemusst,hat gemusst,Akkusativ,no,1
+sagen,sì,dire,sagte,gesagt,hat gesagt,Dativ + Akkusativ,no,1
+machen,sì,fare,machte,gemacht,hat gemacht,Akkusativ,no,1
+geben,no,dare,gab,gegeben,hat gegeben,Dativ + Akkusativ,no,1
+kommen,no,venire,kam,gekommen,ist gekommen,-,no,1
+sollen,no,dovere,sollte,gesollt,hat gesollt,Akkusativ,no,1
+wollen,no,volere,wollte,gewollt,hat gewollt,Akkusativ,no,1
+gehen,no,andare,ging,gegangen,ist gegangen,-,no,1
+wissen,no,sapere,wusste,gewusst,hat gewusst,Akkusativ,no,1
+sehen,no,vedere,sah,gesehen,hat gesehen,Akkusativ,no,1
+lassen,no,lasciare,ließ,gelassen,hat gelassen,Akkusativ,no,1
+stehen,no,stare in piedi,stand,gestanden,hat gestanden,-,no,1
+finden,no,trovare,fand,gefunden,hat gefunden,Akkusativ,no,1
+bleiben,no,rimanere,blieb,geblieben,ist geblieben,-,no,1
+liegen,no,giacere,lag,gelegen,hat gelegen,-,no,2
+heißen,no,chiamarsi,hieß,geheißen,hat geheißen,Nominativ,no,1
+denken,no,pensare,dachte,gedacht,hat gedacht,Akkusativ,no,1
+nehmen,no,prendere,nahm,genommen,hat genommen,Akkusativ,no,1
+tun,no,fare,tat,getan,hat getan,Akkusativ,no,1
+dürfen,no,potere (permesso),durfte,gedurft,hat gedurft,Akkusativ,no,1
+glauben,sì,credere,glaubte,geglaubt,hat geglaubt,Dativ + Akkusativ,no,1
+halten,no,tenere,hielt,gehalten,hat gehalten,Akkusativ,no,2
+nennen,no,nominare,nannte,genannt,hat genannt,Akkusativ,no,2
+mögen,no,piacere,mochte,gemocht,hat gemocht,Akkusativ,no,1
+zeigen,sì,mostrare,zeigte,gezeigt,hat gezeigt,Dativ + Akkusativ,no,1
+führen,sì,condurre,führte,geführt,hat geführt,Akkusativ,no,2
+sprechen,no,parlare,sprach,gesprochen,hat gesprochen,Akkusativ,no,1
+bringen,no,portare,brachte,gebracht,hat gebracht,Dativ + Akkusativ,no,1
+leben,sì,vivere,lebte,gelebt,hat gelebt,-,no,1
+fahren,no,guidare/andare,fuhr,gefahren,ist gefahren,Akkusativ,no,1
+meinen,sì,pensare/opinare,meinte,gemeint,hat gemeint,Akkusativ,no,1
+fragen,sì,chiedere,fragte,gefragt,hat gefragt,Akkusativ,no,1
+kennen,no,conoscere,kannte,gekannt,hat gekannt,Akkusativ,no,1
+gelten,no,valere,galt,gegolten,hat gegolten,Dativ,no,2
+stellen,sì,mettere,stellte,gestellt,hat gestellt,Akkusativ,no,1
+spielen,sì,giocare,spielte,gespielt,hat gespielt,Akkusativ,no,1
+arbeiten,sì,lavorare,arbeitete,gearbeitet,hat gearbeitet,-,no,1
+brauchen,sì,aver bisogno,brauchte,gebraucht,hat gebraucht,Akkusativ,no,1
+folgen,sì,seguire,folgte,gefolgt,ist gefolgt,Dativ,no,2
+lernen,sì,imparare,lernte,gelernt,hat gelernt,Akkusativ,no,1
+bestehen,no,consistere,bestand,bestanden,hat bestanden,Akkusativ,no,2
+verstehen,no,capire,verstand,verstanden,hat verstanden,Akkusativ,no,1
+setzen,sì,mettere/porre,setzte,gesetzt,hat gesetzt,Akkusativ,sì,1
+bekommen,no,ricevere,bekam,bekommen,hat bekommen,Akkusativ,no,1
+beginnen,no,iniziare,begann,begonnen,hat begonnen,Akkusativ,no,1
+erzählen,sì,raccontare,erzählte,erzählt,hat erzählt,Dativ + Akkusativ,no,1
+versuchen,sì,provare,versuchte,versucht,hat versucht,Akkusativ,no,1
+schreiben,no,scrivere,schrieb,geschrieben,hat geschrieben,Dativ + Akkusativ,no,1
+laufen,no,correre,lief,gelaufen,ist gelaufen,-,no,1
+erklären,sì,spiegare,erklärte,erklärt,hat erklärt,Dativ + Akkusativ,no,2
+entsprechen,no,corrispondere,entsprach,entsprochen,hat entsprochen,Dativ,no,3
+sitzen,no,sedere,saß,gesessen,hat gesessen,-,no,1
+ziehen,no,tirare,zog,gezogen,hat/ist gezogen,Akkusativ,no,2
+scheinen,no,sembrare,schien,geschienen,hat geschienen,-,no,2
+fallen,no,cadere,fiel,gefallen,ist gefallen,-,no,2
+gehören,sì,appartenere,gehörte,gehört,hat gehört,Dativ,no,2
+entstehen,no,nascere/sorgere,entstand,entstanden,ist entstanden,-,no,2
+erhalten,no,ricevere,erhielt,erhalten,hat erhalten,Akkusativ,no,2
+treffen,no,incontrare,traf,getroffen,hat getroffen,Akkusativ,sì,1
+suchen,sì,cercare,suchte,gesucht,hat gesucht,Akkusativ,no,1
+legen,sì,posare,legte,gelegt,hat gelegt,Akkusativ,sì,1
+vorstellen,sì,presentare,stellte vor,vorgestellt,hat vorgestellt,Dativ + Akkusativ,sì,1
+handeln,sì,agire,handelte,gehandelt,hat gehandelt,-,no,2
+erreichen,sì,raggiungere,erreichte,erreicht,hat erreicht,Akkusativ,no,2
+tragen,no,portare,trug,getragen,hat getragen,Akkusativ,no,1
+schaffen,sì/no,creare/farcela,schuf/schaffte,geschaffen/geschafft,hat geschaffen/geschafft,Akkusativ,no,1
+lesen,no,leggere,las,gelesen,hat gelesen,Akkusativ,no,1
+verlieren,no,perdere,verlor,verloren,hat verloren,Akkusativ,no,1
+darstellen,sì,rappresentare,stellte dar,dargestellt,hat dargestellt,Akkusativ,no,3
+erkennen,no,riconoscere,erkannte,erkannt,hat erkannt,Akkusativ,no,2
+entwickeln,sì,sviluppare,entwickelte,entwickelt,hat entwickelt,Akkusativ,sì,2
+reden,sì,parlare,redete,geredet,hat geredet,-,no,1
+aussehen,no,apparire,sah aus,ausgesehen,hat ausgesehen,-,no,1
+erscheinen,no,apparire,erschien,erschienen,ist erschienen,-,no,2
+bilden,sì,formare,bildete,gebildet,hat gebildet,Akkusativ,sì,2
+anfangen,no,iniziare,fing an,angefangen,hat angefangen,Akkusativ,no,1
+erwarten,sì,aspettarsi,erwartete,erwartet,hat erwartet,Akkusativ,no,2
+wohnen,sì,abitare,wohnte,gewohnt,hat gewohnt,-,no,1
+betreffen,no,riguardare,betraf,betroffen,hat betroffen,Akkusativ,no,2
+warten,sì,aspettare,wartete,gewartet,hat gewartet,Akkusativ,no,1
+vergehen,no,passare (tempo),verging,vergangen,ist vergangen,-,no,2
+helfen,no,aiutare,half,geholfen,hat geholfen,Dativ,no,1
+gewinnen,no,vincere,gewann,gewonnen,hat gewonnen,Akkusativ,no,2
+schließen,no,chiudere,schloss,geschlossen,hat geschlossen,Akkusativ,no,1
+fühlen,sì,sentire,fühlte,gefühlt,hat gefühlt,Akkusativ,sì,1
+bieten,no,offrire,bot,geboten,hat geboten,Dativ + Akkusativ,no,2
+interessieren,sì,interessare,interessierte,interessiert,hat interessiert,Akkusativ,sì,1
+erinnern,sì,ricordare,erinnerte,erinnert,hat erinnert,Akkusativ,sì,1
+ergeben,no,risultare,ergab,ergeben,hat ergeben,Akkusativ,sì,2
+anbieten,no,offrire,bot an,angeboten,hat angeboten,Dativ + Akkusativ,no,2
+studieren,sì,studiare,studierte,studiert,hat studiert,Akkusativ,no,1
+verbinden,no,collegare,verband,verbunden,hat verbunden,Akkusativ,no,2
+ansehen,no,guardare,sah an,angesehen,hat angesehen,Akkusativ,sì,1
+fehlen,sì,mancare,fehlte,gefehlt,hat gefehlt,Dativ,no,2
+bedeuten,sì,significare,bedeutete,bedeutet,hat bedeutet,Akkusativ,no,2
+vergleichen,no,paragonare,verglich,verglichen,hat verglichen,Akkusativ,no,2
+schlafen,no,dormire,schlief,geschlafen,hat geschlafen,-,no,1
+trinken,no,bere,trank,getrunken,hat getrunken,Akkusativ,no,1
+essen,no,mangiare,aß,gegessen,hat gegessen,Akkusativ,no,1
+lieben,sì,amare,liebte,geliebt,hat geliebt,Akkusativ,no,1
+hören,sì,sentire,hörte,gehört,hat gehört,Akkusativ,no,1
+kaufen,sì,comprare,kaufte,gekauft,hat gekauft,Dativ + Akkusativ,no,1
+verkaufen,sì,vendere,verkaufte,verkauft,hat verkauft,Dativ + Akkusativ,no,1
+öffnen,sì,aprire,öffnete,geöffnet,hat geöffnet,Akkusativ,no,1
+ändern,sì,cambiare,änderte,geändert,hat geändert,Akkusativ,sì,1
+steigen,no,salire,stieg,gestiegen,ist gestiegen,-,no,2
+hängen,no,appendere,hing,gehangen,hat gehangen,-,no,2
+achten,sì,fare attenzione,achtete,geachtet,hat geachtet,Akkusativ,no,2
+benutzen,sì,usare,benutzte,benutzt,hat benutzt,Akkusativ,no,1
+verwenden,no,utilizzare,verwandte/verwendete,verwandt/verwendet,hat verwandt/verwendet,Akkusativ,no,2
+bestimmen,sì,determinare,bestimmte,bestimmt,hat bestimmt,Akkusativ,no,2
+untersuchen,sì,esaminare,untersuchte,untersucht,hat untersucht,Akkusativ,no,2
+betrachten,sì,considerare,betrachtete,betrachtet,hat betrachtet,Akkusativ,no,2
+beschreiben,no,descrivere,beschrieb,beschrieben,hat beschrieben,Akkusativ,no,2
+beweisen,no,dimostrare,bewies,bewiesen,hat bewiesen,Akkusativ,no,2
+entscheiden,no,decidere,entschied,entschieden,hat entschieden,Akkusativ,sì,1
+erfahren,no,venire a sapere,erfuhr,erfahren,hat erfahren,Akkusativ,no,2
+genießen,no,godere,genoss,genossen,hat genossen,Akkusativ,no,2
+behalten,no,mantenere,behielt,behalten,hat behalten,Akkusativ,no,2
+begegnen,sì,incontrare,begegnete,begegnet,ist begegnet,Dativ,no,2
+bemerken,sì,notare,bemerkte,bemerkt,hat bemerkt,Akkusativ,no,2
+beschließen,no,decidere,beschloss,beschlossen,hat beschlossen,Akkusativ,no,2
+bewegen,sì/no,muovere,bewegte/bewog,bewegt/bewogen,hat bewegt/bewogen,Akkusativ,sì,1
+beziehen,no,riferirsi,bezog,bezogen,hat bezogen,Akkusativ,sì,2
+bitten,no,pregare,bat,gebeten,hat gebeten,Akkusativ,no,1
+fördern,sì,promuovere,förderte,gefördert,hat gefördert,Akkusativ,no,2
+fordern,sì,esigere,forderte,gefordert,hat gefordert,Akkusativ,no,2
+sorgen,sì,preoccuparsi,sorgte,gesorgt,hat gesorgt,Akkusativ,sì,1
+freuen,sì,rallegrarsi,freute,gefreut,hat gefreut,Akkusativ,sì,1
+ärgern,sì,irritare,ärgerte,geärgert,hat geärgert,Akkusativ,sì,2
+wundern,sì,stupirsi,wunderte,gewundert,hat gewundert,Akkusativ,sì,2
+hoffen,sì,sperare,hoffte,gehofft,hat gehofft,Akkusativ,no,1
+wünschen,sì,desiderare,wünschte,gewünscht,hat gewünscht,Dativ + Akkusativ,sì,1
+leuchten,sì,illuminare,leuchtete,geleuchtet,hat geleuchtet,-,no,3
+brennen,no,bruciare,brannte,gebrannt,hat gebrannt,-,no,2
+bauen,sì,costruire,baute,gebaut,hat gebaut,Akkusativ,no,2
+zerstören,sì,distruggere,zerstörte,zerstört,hat zerstört,Akkusativ,no,2
+retten,sì,salvare,rettete,gerettet,hat gerettet,Akkusativ,no,2
+töten,sì,uccidere,tötete,getötet,hat getötet,Akkusativ,no,3
+sterben,no,morire,starb,gestorben,ist gestorben,-,no,2
+aufwachsen,no,crescere,wuchs auf,aufgewachsen,ist aufgewachsen,-,no,2
+pflegen,sì,curare,pflegte,gepflegt,hat gepflegt,Akkusativ,no,3
+heilen,sì,guarire,heilte,geheilt,hat geheilt,Akkusativ,no,3
+leiden,no,soffrire,litt,gelitten,hat gelitten,Akkusativ,no,2
+schmerzen,sì,far male,schmerzte,geschmerzt,hat geschmerzt,-,no,3
+lachen,sì,ridere,lachte,gelacht,hat gelacht,-,no,1
+weinen,sì,piangere,weinte,geweint,hat geweint,-,no,2
+lächeln,sì,sorridere,lächelte,gelächelt,hat gelächelt,-,no,2
+grüßen,sì,salutare,grüßte,gegrüßt,hat gegrüßt,Akkusativ,no,1
+danken,sì,ringraziare,dankte,gedankt,hat gedankt,Dativ,no,1
+entschuldigen,sì,scusare,entschuldigte,entschuldigt,hat entschuldigt,Akkusativ,sì,1
+verzeihen,no,perdonare,verzieh,verziehen,hat verziehen,Dativ,no,2
+versprechen,no,promettere,versprach,versprochen,hat versprochen,Dativ + Akkusativ,no,1
+drohen,sì,minacciare,drohte,gedroht,hat gedroht,Dativ,no,2
+warnen,sì,avvertire,warnte,gewarnt,hat gewarnt,Akkusativ,no,2
+loben,sì,lodare,lobte,gelobt,hat gelobt,Akkusativ,no,2
+kritisieren,sì,criticare,kritisierte,kritisiert,hat kritisiert,Akkusativ,no,2
+antworten,sì,rispondere,antwortete,geantwortet,hat geantwortet,Dativ,no,1
+reagieren,sì,reagire,reagierte,reagiert,hat reagiert,Akkusativ,no,2
+diskutieren,sì,discutere,diskutierte,diskutiert,hat diskutiert,Akkusativ,no,2
+streiten,no,litigare,stritt,gestritten,hat gestritten,-,sì,2
+kämpfen,sì,combattere,kämpfte,gekämpft,hat gekämpft,-,no,2
+siegen,sì,vincere,siegte,gesiegt,hat gesiegt,-,no,3
+verteidigen,sì,difendere,verteidigte,verteidigt,hat verteidigt,Akkusativ,no,2
+angreifen,no,attaccare,griff an,angegriffen,hat angegriffen,Akkusativ,no,2
+schützen,sì,proteggere,schützte,geschützt,hat geschützt,Akkusativ,no,2
+riskieren,sì,rischiare,riskierte,riskiert,hat riskiert,Akkusativ,no,2
+wagen,sì,osare,wagte,gewagt,hat gewagt,Akkusativ,no,3
+trauen,sì,fidarsi,traute,getraut,hat getraut,Dativ,sì,2
+vertrauen,sì,aver fiducia,vertraute,vertraut,hat vertraut,Dativ,no,2
+zweifeln,sì,dubitare,zweifelte,gezweifelt,hat gezweifelt,Akkusativ,no,3
+überzeugen,sì,convincere,überzeugte,überzeugt,hat überzeugt,Akkusativ,no,2
+beeinflussen,sì,influenzare,beeinflusste,beeinflusst,hat beeinflusst,Akkusativ,no,2
+scheitern,sì,fallire,scheiterte,gescheitert,ist gescheitert,-,no,2
+gelingen,no,riuscire,gelang,gelungen,ist gelungen,Dativ,no,2
+misslingen,no,fallire,misslang,misslungen,ist misslungen,Dativ,no,3
+klappen,sì,funzionare,klappte,geklappt,hat geklappt,-,no,2
+funktionieren,sì,funzionare,funktionierte,funktioniert,hat funktioniert,-,no,2
+passen,sì,andare bene,passte,gepasst,hat gepasst,Dativ,no,1
+stimmen,sì,essere giusto,stimmte,gestimmt,hat gestimmt,-,no,2
+zählen,sì,contare,zählte,gezählt,hat gezählt,Akkusativ,no,1
+rechnen,sì,calcolare,rechnete,gerechnet,hat gerechnet,Akkusativ,no,2
+messen,no,misurare,maß,gemessen,hat gemessen,Akkusativ,no,2
+wiegen,no,pesare,wog,gewogen,hat gewogen,Akkusativ,no,2
+kosten,sì,costare,kostete,gekostet,hat gekostet,Akkusativ,no,1
+zahlen,sì,pagare,zahlte,gezahlt,hat gezahlt,Akkusativ,no,1
+sparen,sì,risparmiare,sparte,gespart,hat gespart,Akkusativ,no,2
+ausgeben,no,spendere,gab aus,ausgegeben,hat ausgegeben,Akkusativ,no,2
+verdienen,sì,guadagnare,verdiente,verdient,hat verdient,Akkusativ,no,1
+investieren,sì,investire,investierte,investiert,hat investiert,Akkusativ,no,2
+leihen,no,prestare,lieh,geliehen,hat geliehen,Dativ + Akkusativ,no,2
+borgen,sì,prendere in prestito,borgte,geborgt,hat geborgt,Dativ + Akkusativ,no,3
+schulden,sì,dovere (denaro),schuldete,geschuldet,hat geschuldet,Dativ + Akkusativ,no,3
+besitzen,no,possedere,besaß,besessen,hat besessen,Akkusativ,no,2
+teilen,sì,dividere,teilte,geteilt,hat geteilt,Akkusativ,no,1
+trennen,sì,separare,trennte,getrennt,hat getrennt,Akkusativ,sì,1
+sammeln,sì,raccogliere,sammelte,gesammelt,hat gesammelt,Akkusativ,no,2
+verteilen,sì,distribuire,verteilte,verteilt,hat verteilt,Akkusativ,no,2
+ordnen,sì,ordinare,ordnete,geordnet,hat geordnet,Akkusativ,no,2
+organisieren,sì,organizzare,organisierte,organisiert,hat organisiert,Akkusativ,no,2
+planen,sì,pianificare,plante,geplant,hat geplant,Akkusativ,no,1
+vorbereiten,sì,preparare,bereitete vor,vorbereitet,hat vorbereitet,Akkusativ,sì,1
+durchführen,sì,eseguire,führte durch,durchgeführt,hat durchgeführt,Akkusativ,no,2
+ausführen,sì,eseguire,führte aus,ausgeführt,hat ausgeführt,Akkusativ,no,2
+erfüllen,sì,compiere,erfüllte,erfüllt,hat erfüllt,Akkusativ,no,2
+vollenden,sì,completare,vollendete,vollendet,hat vollendet,Akkusativ,no,3
+beenden,sì,terminare,beendete,beendet,hat beendet,Akkusativ,no,2
+aufhören,sì,smettere,hörte auf,aufgehört,hat aufgehört,-,no,1
+abbrechen,no,interrompere,brach ab,abgebrochen,hat abgebrochen,Akkusativ,no,2
+fortsetzen,sì,continuare,setzte fort,fortgesetzt,hat fortgesetzt,Akkusativ,no,2
+weitermachen,sì,continuare,machte weiter,weitergemacht,hat weitergemacht,-,no,2
+pausieren,sì,fare una pausa,pausierte,pausiert,hat pausiert,-,no,2
+ruhen,sì,riposare,ruhte,geruht,hat geruht,-,no,3
+entspannen,sì,rilassarsi,entspannte,entspannt,hat entspannt,Akkusativ,sì,2
+erholen,sì,riprendersi,erholte,erholt,hat erholt,Akkusativ,sì,2
+ausruhen,sì,riposarsi,ruhte aus,ausgeruht,hat ausgeruht,Akkusativ,sì,2
+träumen,sì,sognare,träumte,geträumt,hat geträumt,Akkusativ,no,1
+erwachen,sì,svegliarsi,erwachte,erwacht,ist erwacht,-,no,3
+aufwachen,sì,svegliarsi,wachte auf,aufgewacht,ist aufgewacht,-,no,1
+aufstehen,no,alzarsi,stand auf,aufgestanden,ist aufgestanden,-,no,1
+aufwecken,sì,svegliare,weckte auf,aufgeweckt,hat aufgeweckt,Akkusativ,no,2
+anziehen,no,vestirsi,zog an,angezogen,hat angezogen,Akkusativ,sì,1
+ausziehen,no,spogliarsi,zog aus,ausgezogen,hat ausgezogen,Akkusativ,sì,1
+kleiden,sì,vestire,kleidete,gekleidet,hat gekleidet,Akkusativ,sì,3
+waschen,no,lavare,wusch,gewaschen,hat gewaschen,Akkusativ,sì,1
+putzen,sì,pulire,putzte,geputzt,hat geputzt,Akkusativ,no,1
+reinigen,sì,pulire,reinigte,gereinigt,hat gereinigt,Akkusativ,no,2
+trocknen,sì,asciugare,trocknete,getrocknet,hat getrocknet,Akkusativ,no,2
+bügeln,sì,stirare,bügelte,gebügelt,hat gebügelt,Akkusativ,no,2
+nähen,sì,cucire,nähte,genäht,hat genäht,Akkusativ,no,3
+flicken,sì,rammendare,flickte,geflickt,hat geflickt,Akkusativ,no,4
+kochen,sì,cucinare,kochte,gekocht,hat gekocht,Akkusativ,no,1
+braten,no,friggere,briet,gebraten,hat gebraten,Akkusativ,no,2
+backen,no,cuocere al forno,buk/backte,gebacken,hat gebacken,Akkusativ,no,2
+grillen,sì,grigliare,grillte,gegrillt,hat gegrillt,Akkusativ,no,2
+zubereiten,sì,preparare,bereitete zu,zubereitet,hat zubereitet,Akkusativ,no,2
+servieren,sì,servire,servierte,serviert,hat serviert,Dativ + Akkusativ,no,2
+probieren,sì,assaggiare,probierte,probiert,hat probiert,Akkusativ,no,1
+schmecken,sì,avere sapore,schmeckte,geschmeckt,hat geschmeckt,Dativ,no,1
+riechen,no,odorare,roch,gerochen,hat gerochen,Akkusativ,no,1
+duften,sì,profumare,duftete,geduftet,hat geduftet,-,no,3
+stinken,no,puzzare,stank,gestunken,hat gestunken,-,no,3
+atmen,sì,respirare,atmete,geatmet,hat geatmet,-,no,2
+husten,sì,tossire,hustete,gehustet,hat gehustet,-,no,2
+niesen,sì,starnutire,nieste,geniest,hat geniest,-,no,3
+üben,sì,esercitare,übte,geübt,hat geübt,Akkusativ,no,1
+trainieren,sì,allenare,trainierte,trainiert,hat trainiert,Akkusativ,no,1
+unterrichten,sì,insegnare,unterrichtete,unterrichtet,hat unterrichtet,Akkusativ,no,2
+lehren,sì,insegnare,lehrte,gelehrt,hat gelehrt,Dativ + Akkusativ,no,2
+beibringen,no,insegnare,brachte bei,beigebracht,hat beigebracht,Dativ + Akkusativ,no,2
+ausbilden,sì,formare,bildete aus,ausgebildet,hat ausgebildet,Akkusativ,no,2
+erziehen,no,educare,erzog,erzogen,hat erzogen,Akkusativ,no,2
+präsentieren,sì,presentare,präsentierte,präsentiert,hat präsentiert,Dativ + Akkusativ,no,2
+demonstrieren,sì,dimostrare,demonstrierte,demonstriert,hat demonstriert,Akkusativ,no,2
+zeigen,sì,indicare,zeigte,gezeigt,hat gezeigt,Dativ + Akkusativ,no,1
+empfehlen,no,raccomandare,empfahl,empfohlen,hat empfohlen,Dativ + Akkusativ,no,2
+raten,no,consigliare,riet,geraten,hat geraten,Dativ,no,2
+vorschlagen,no,proporre,schlug vor,vorgeschlagen,hat vorgeschlagen,Dativ + Akkusativ,no,2
+beraten,no,consigliare,beriet,beraten,hat beraten,Akkusativ,no,2
+informieren,sì,informare,informierte,informiert,hat informiert,Akkusativ,no,2
+mitteilen,sì,comunicare,teilte mit,mitgeteilt,hat mitgeteilt,Dativ + Akkusativ,no,2
+melden,sì,annunciare,meldete,gemeldet,hat gemeldet,Akkusativ,sì,2
+benachrichtigen,sì,avvisare,benachrichtigte,benachrichtigt,hat benachrichtigt,Akkusativ,no,2
+warnen,sì,avvertire,warnte,gewarnt,hat gewarnt,Akkusativ,no,2
+mahnen,sì,ammonire,mahnte,gemahnt,hat gemahnt,Akkusativ,no,3
+ermahnen,sì,ammonire,ermahnte,ermahnt,hat ermahnt,Akkusativ,no,3
+ermahnten,sì,esortare,ermahnte,ermahnt,hat ermahnt,Akkusativ,no,3
+bieten,no,offrire,bot,geboten,hat geboten,Dativ + Akkusativ,no,2
+anbieten,no,offrire,bot an,angeboten,hat angeboten,Dativ + Akkusativ,no,2
+schenken,sì,regalare,schenkte,geschenkt,hat geschenkt,Dativ + Akkusativ,no,1
+spenden,sì,donare,spendete,gespendet,hat gespendet,Dativ + Akkusativ,no,2
+widmen,sì,dedicare,widmete,gewidmet,hat gewidmet,Dativ + Akkusativ,no,3
+opfern,sì,sacrificare,opferte,geopfert,hat geopfert,Akkusativ,no,3
+verleihen,no,prestare/conferire,verlieh,verliehen,hat verliehen,Dativ + Akkusativ,no,3
+gewähren,sì,concedere,gewährte,gewährt,hat gewährt,Dativ + Akkusativ,no,3
+erlauben,sì,permettere,erlaubte,erlaubt,hat erlaubt,Dativ + Akkusativ,no,1
+gestatten,sì,permettere,gestattete,gestattet,hat gestattet,Dativ + Akkusativ,no,3
+genehmigen,sì,approvare,genehmigte,genehmigt,hat genehmigt,Akkusativ,no,2
+verbieten,no,vietare,verbot,verboten,hat verboten,Dativ + Akkusativ,no,2
+untersagen,sì,proibire,untersagte,untersagt,hat untersagt,Dativ + Akkusativ,no,3
+hindern,sì,impedire,hinderte,gehindert,hat gehindert,Akkusativ,no,2
+verhindern,sì,impedire,verhinderte,verhindert,hat verhindert,Akkusativ,no,2
+stören,sì,disturbare,störte,gestört,hat gestört,Akkusativ,no,2
+unterbrechen,no,interrompere,unterbrach,unterbrochen,hat unterbrochen,Akkusativ,no,2
+fortfahren,no,continuare,fuhr fort,fortgefahren,ist fortgefahren,-,no,3
+weitergehen,no,continuare,ging weiter,weitergegangen,ist weitergegangen,-,no,2
+aufgeben,no,rinunciare,gab auf,aufgegeben,hat aufgegeben,Akkusativ,no,2
+verzichten,sì,rinunciare,verzichtete,verzichtet,hat verzichtet,Akkusativ,no,2
+vermeiden,no,evitare,vermied,vermieden,hat vermieden,Akkusativ,no,2
+verweigern,sì,rifiutare,verweigerte,verweigert,hat verweigert,Akkusativ,no,2
+ablehnen,sì,rifiutare,lehnte ab,abgelehnt,hat abgelehnt,Akkusativ,no,2
+zurückweisen,no,respingere,wies zurück,zurückgewiesen,hat zurückgewiesen,Akkusativ,no,3
+akzeptieren,sì,accettare,akzeptierte,akzeptiert,hat akzeptiert,Akkusativ,no,2
+annehmen,no,accettare,nahm an,angenommen,hat angenommen,Akkusativ,no,1
+empfangen,no,ricevere,empfing,empfangen,hat empfangen,Akkusativ,no,3
+begrüßen,sì,salutare,begrüßte,begrüßt,hat begrüßt,Akkusativ,no,1
+willkommen heißen,no,dare il benvenuto,hieß willkommen,willkommen geheißen,hat willkommen geheißen,Akkusativ,no,3
+verabschieden,sì,congedarsi,verabschiedete,verabschiedet,hat verabschiedet,Akkusativ,sì,1
+verlassen,no,lasciare,verließ,verlassen,hat verlassen,Akkusativ,no,1
+weggehen,no,andare via,ging weg,weggegangen,ist weggegangen,-,no,1
+fortgehen,no,andare via,ging fort,fortgegangen,ist fortgegangen,-,no,2
+abreisen,sì,partire,reiste ab,abgereist,ist abgereist,-,no,2
+abfahren,no,partire,fuhr ab,abgefahren,ist abgefahren,-,no,2
+ankommen,no,arrivare,kam an,angekommen,ist angekommen,-,no,1
+zurückkommen,no,tornare,kam zurück,zurückgekommen,ist zurückgekommen,-,no,1
+zurückkehren,sì,ritornare,kehrte zurück,zurückgekehrt,ist zurückgekehrt,-,no,2
+heimkehren,sì,tornare a casa,kehrte heim,heimgekehrt,ist heimgekehrt,-,no,3
+besuchen,sì,visitare,besuchte,besucht,hat besucht,Akkusativ,no,1
+besichtigen,sì,visitare,besichtigte,besichtigt,hat besichtigt,Akkusativ,no,2
+erkunden,sì,esplorare,erkundete,erkundet,hat erkundet,Akkusativ,no,3
+erforschen,sì,esplorare,erforschte,erforscht,hat erforscht,Akkusativ,no,3
+untersuchen,sì,indagare,untersuchte,untersucht,hat untersucht,Akkusativ,no,2
+prüfen,sì,verificare,prüfte,geprüft,hat geprüft,Akkusativ,no,2
+testen,sì,testare,testete,getestet,hat getestet,Akkusativ,no,2
+kontrollieren,sì,controllare,kontrollierte,kontrolliert,hat kontrolliert,Akkusativ,no,2
+überprüfen,sì,verificare,überprüfte,überprüft,hat überprüft,Akkusativ,no,2
+nachprüfen,sì,controllare,prüfte nach,nachgeprüft,hat nachgeprüft,Akkusativ,no,3
+bestätigen,sì,confermare,bestätigte,bestätigt,hat bestätigt,Akkusativ,no,2
+bejahen,sì,affermare,bejahte,bejaht,hat bejaht,Akkusativ,no,3
+verneinen,sì,negare,verneinte,verneint,hat verneint,Akkusativ,no,3
+leugnen,sì,negare,leugnete,geleugnet,hat geleugnet,Akkusativ,no,3
+widersprechen,no,contraddire,widersprach,widersprochen,hat widersprochen,Dativ,no,2
+zustimmen,sì,essere d'accordo,stimmte zu,zugestimmt,hat zugestimmt,Dativ,no,2
+einwilligen,sì,acconsentire,willigte ein,eingewilligt,hat eingewilligt,Akkusativ,no,3
+einverstanden sein,no,essere d'accordo,war einverstanden,einverstanden gewesen,ist einverstanden gewesen,-,no,2
+protestieren,sì,protestare,protestierte,protestiert,hat protestiert,-,no,2
+demonstrieren,sì,manifestare,demonstrierte,demonstriert,hat demonstriert,-,no,2
+rebellieren,sì,ribellarsi,rebellierte,rebelliert,hat rebelliert,-,no,3
+revoltieren,sì,rivoltarsi,revoltierte,revoltiert,hat revoltiert,-,no,4
+kämpfen,sì,lottare,kämpfte,gekämpft,hat gekämpft,-,no,2
+ringen,no,lottare,rang,gerungen,hat gerungen,-,no,3
+streiten,no,disputare,stritt,gestritten,hat gestritten,-,no,2
+zanken,sì,litigare,zankte,gezankt,hat gezankt,-,sì,3
+schimpfen,sì,sgridare,schimpfte,geschimpft,hat geschimpft,-,no,2
+fluchen,sì,bestemmiare,fluchte,geflucht,hat geflucht,-,no,3
+schwören,no,giurare,schwor,geschworen,hat geschworen,Akkusativ,no,3
+versichern,sì,assicurare,versicherte,versichert,hat versichert,Dativ + Akkusativ,no,2
+garantieren,sì,garantire,garantierte,garantiert,hat garantiert,Dativ + Akkusativ,no,2
+gewährleisten,sì,garantire,gewährleistete,gewährleistet,hat gewährleistet,Akkusativ,no,3
+sichern,sì,assicurare,sicherte,gesichert,hat gesichert,Akkusativ,no,2
+schützen,sì,proteggere,schützte,geschützt,hat geschützt,Akkusativ,no,2
+bewahren,sì,conservare,bewahrte,bewahrt,hat bewahrt,Akkusativ,no,2
+erhalten,no,conservare,erhielt,erhalten,hat erhalten,Akkusativ,no,2
+aufbewahren,sì,conservare,bewahrte auf,aufbewahrt,hat aufbewahrt,Akkusativ,no,2
+speichern,sì,salvare/memorizzare,speicherte,gespeichert,hat gespeichert,Akkusativ,no,2
+lagern,sì,immagazzinare,lagerte,gelagert,hat gelagert,Akkusativ,no,3
+aufheben,no,conservare,hob auf,aufgehoben,hat aufgehoben,Akkusativ,no,2
+wegwerfen,no,buttare via,warf weg,weggeworfen,hat weggeworfen,Akkusativ,no,1
+entsorgen,sì,smaltire,entsorgte,entsorgt,hat entsorgt,Akkusativ,no,3
+beseitigen,sì,eliminare,beseitigte,beseitigt,hat beseitigt,Akkusativ,no,3
+entfernen,sì,rimuovere,entfernte,entfernt,hat entfernt,Akkusativ,no,2
+löschen,sì,cancellare,löschte,gelöscht,hat gelöscht,Akkusativ,no,2
+streichen,no,cancellare,strich,gestrichen,hat gestrichen,Akkusativ,no,2
+tilgen,sì,cancellare,tilgte,getilgt,hat getilgt,Akkusativ,no,4
+vernichten,sì,distruggere,vernichtete,vernichtet,hat vernichtet,Akkusativ,no,3
+zerstören,sì,distruggere,zerstörte,zerstört,hat zerstört,Akkusativ,no,2
+ruinieren,sì,rovinare,ruinierte,ruiniert,hat ruiniert,Akkusativ,no,3
+beschädigen,sì,danneggiare,beschädigte,beschädigt,hat beschädigt,Akkusativ,no,2
+verletzen,sì,ferire,verletzte,verletzt,hat verletzt,Akkusativ,no,2
+verwunden,sì,ferire,verwundete,verwundet,hat verwundet,Akkusativ,no,3
+schaden,sì,danneggiare,schadete,geschadet,hat geschadet,Dativ,no,2
+nützen,sì,essere utile,nützte,genützt,hat genützt,Dativ,no,2
+nutzen,sì,usare,nutzte,genutzt,hat genutzt,Akkusativ,no,2
+helfen,no,aiutare,half,geholfen,hat geholfen,Dativ,no,1
+unterstützen,sì,sostenere,unterstützte,unterstützt,hat unterstützt,Akkusativ,no,2
+beistehen,no,assistere,stand bei,beigestanden,hat beigestanden,Dativ,no,3
+assistieren,sì,assistere,assistierte,assistiert,hat assistiert,Dativ,no,3
+dienen,sì,servire,diente,gedient,hat gedient,Dativ,no,2
+begünstigen,sì,favorire,begünstigte,begünstigt,hat begünstigt,Akkusativ,no,3
+bevorzugen,sì,preferire,bevorzugte,bevorzugt,hat bevorzugt,Akkusativ,no,2
+vorziehen,no,preferire,zog vor,vorgezogen,hat vorgezogen,Akkusativ,no,2
+wählen,sì,scegliere,wählte,gewählt,hat gewählt,Akkusativ,no,1
+auswählen,sì,selezionare,wählte aus,ausgewählt,hat ausgewählt,Akkusativ,no,2
+aussuchen,sì,scegliere,suchte aus,ausgesucht,hat ausgesucht,Akkusativ,no,2
+entscheiden,no,decidere,entschied,entschieden,hat entschieden,Akkusativ,sì,1
+bestimmen,sì,decidere,bestimmte,bestimmt,hat bestimmt,Akkusativ,no,2
+festlegen,sì,stabilire,legte fest,festgelegt,hat festgelegt,Akkusativ,no,2
+festsetzen,sì,fissare,setzte fest,festgesetzt,hat festgesetzt,Akkusativ,no,3
+vereinbaren,sì,concordare,vereinbarte,vereinbart,hat vereinbart,Akkusativ,no,2
+verabreden,sì,fissare un appuntamento,verabredete,verabredet,hat verabredet,Akkusativ,sì,2
+absprechen,no,concordare,sprach ab,abgesprochen,hat abgesprochen,Akkusativ,no,3
+koordinieren,sì,coordinare,koordinierte,koordiniert,hat koordiniert,Akkusativ,no,2
+abstimmen,sì,coordinare,stimmte ab,abgestimmt,hat abgestimmt,Akkusativ,no,2
+anpassen,sì,adattare,passte an,angepasst,hat angepasst,Akkusativ,sì,2
+adaptieren,sì,adattare,adaptierte,adaptiert,hat adaptiert,Akkusativ,no,3
+modifizieren,sì,modificare,modifizierte,modifiziert,hat modifiziert,Akkusativ,no,3
+verändern,sì,modificare,veränderte,verändert,hat verändert,Akkusativ,sì,2
+umwandeln,sì,trasformare,wandelte um,umgewandelt,hat umgewandelt,Akkusativ,no,3
+verwandeln,sì,trasformare,verwandelte,verwandelt,hat verwandelt,Akkusativ,sì,2
+umformen,sì,trasformare,formte um,umgeformt,hat umgeformt,Akkusativ,no,3
+gestalten,sì,configurare,gestaltete,gestaltet,hat gestaltet,Akkusativ,no,2
+formen,sì,formare,formte,geformt,hat geformt,Akkusativ,no,2
+prägen,sì,coniare/caratterizzare,prägte,geprägt,hat geprägt,Akkusativ,no,2
+beeinflussen,sì,influenzare,beeinflusste,beeinflusst,hat beeinflusst,Akkusativ,no,2
+wirken,sì,agire/avere effetto,wirkte,gewirkt,hat gewirkt,-,no,2
+auswirken,sì,avere effetto,wirkte aus,ausgewirkt,hat ausgewirkt,-,sì,2
+einwirken,sì,agire su,wirkte ein,eingewirkt,hat eingewirkt,Akkusativ,no,3
+betreffen,no,riguardare,betraf,betroffen,hat betroffen,Akkusativ,no,2
+angehen,no,riguardare,ging an,angegangen,hat angegangen,Akkusativ,no,2
+berühren,sì,toccare,berührte,berührt,hat berührt,Akkusativ,no,2
+betasten,sì,palpare,betastete,betastet,hat betastet,Akkusativ,no,3
+anfassen,sì,toccare,fasste an,angefasst,hat angefasst,Akkusativ,no,1
+greifen,no,afferrare,griff,gegriffen,hat gegriffen,Akkusativ,no,2
+ergreifen,no,afferrare,ergriff,ergriffen,hat ergriffen,Akkusativ,no,2
+packen,sì,afferrare,packte,gepackt,hat gepackt,Akkusativ,no,1
+fassen,sì,afferrare,fasste,gefasst,hat gefasst,Akkusativ,no,2
+festhalten,no,tenere fermo,hielt fest,festgehalten,hat festgehalten,Akkusativ,no,2
+halten,no,tenere,hielt,gehalten,hat gehalten,Akkusativ,no,1
+tragen,no,portare,trug,getragen,hat getragen,Akkusativ,no,1
+schleppen,sì,trascinare,schleppte,geschleppt,hat geschleppt,Akkusativ,no,2
+ziehen,no,tirare,zog,gezogen,hat gezogen,Akkusativ,no,1
+zerren,sì,tirare con forza,zerrte,gezerrt,hat gezerrt,Akkusativ,no,3
+drücken,sì,premere,drückte,gedrückt,hat gedrückt,Akkusativ,no,1
+pressen,sì,premere,presste,gepresst,hat gepresst,Akkusativ,no,3
+schieben,no,spingere,schob,geschoben,hat geschoben,Akkusativ,no,1
+stoßen,no,spingere,stieß,gestoßen,hat gestoßen,Akkusativ,no,2
+werfen,no,lanciare,warf,geworfen,hat geworfen,Akkusativ,no,1
+schleudern,sì,lanciare,schleuderte,geschleudert,hat geschleudert,Akkusativ,no,3
+schießen,no,sparare,schoss,geschossen,hat geschossen,Akkusativ,no,2
+treffen,no,colpire,traf,getroffen,hat getroffen,Akkusativ,no,1
+schlagen,no,colpire,schlug,geschlagen,hat geschlagen,Akkusativ,no,1
+hauen,no,picchiare,hieb/haute,gehauen,hat gehauen,Akkusativ,no,2
+prügeln,sì,picchiare,prügelte,geprügelt,hat geprügelt,Akkusativ,no,3
+boxen,sì,fare a pugni,boxte,geboxt,hat geboxt,-,no,3
+kämpfen,sì,combattere,kämpfte,gekämpft,hat gekämpft,-,no,2
+fechten,no,fare scherma,focht,gefochten,hat gefochten,-,no,4
+ringen,no,lottare,rang,gerungen,hat gerungen,-,no,3
+schwimmen,no,nuotare,schwamm,geschwommen,ist geschwommen,-,no,1
+tauchen,sì,immergersi,tauchte,getaucht,hat/ist getaucht,-,no,2
+segeln,sì,navigare a vela,segelte,gesegelt,ist gesegelt,-,no,3
+rudern,sì,remare,ruderte,gerudert,ist gerudert,-,no,3
+paddeln,sì,pagaiare,paddelte,gepaddelt,ist gepaddelt,-,no,4
+klettern,sì,arrampicarsi,kletterte,geklettert,ist geklettert,-,no,2
+steigen,no,salire,stieg,gestiegen,ist gestiegen,-,no,1
+springen,no,saltare,sprang,gesprungen,ist gesprungen,-,no,1
+hüpfen,sì,saltellare,hüpfte,gehüpft,ist gehüpft,-,no,2
+tanzen,sì,ballare,tanzte,getanzt,hat getanzt,-,no,1
+singen,no,cantare,sang,gesungen,hat gesungen,Akkusativ,no,1
+pfeifen,no,fischiare,pfiff,gepfiffen,hat gepfiffen,Akkusativ,no,2
+summen,sì,canticchiare,summte,gesummt,hat gesummt,Akkusativ,no,3
+brummen,sì,ronzare,brummte,gebrummt,hat gebrummt,-,no,3
+rauschen,sì,scrosciare,rauschte,gerauscht,hat gerauscht,-,no,3
+klingen,no,suonare,klang,geklungen,hat geklungen,-,no,2
+tönen,sì,risuonare,tönte,getönt,hat getönt,-,no,3
+läuten,sì,suonare (campana),läutete,geläutet,hat geläutet,-,no,3
+klingeln,sì,suonare (campanello),klingelte,geklingelt,hat geklingelt,-,no,2
+läuten,sì,squillare,läutete,geläutet,hat geläutet,-,no,3
+ticken,sì,ticchettare,tickte,getickt,hat getickt,-,no,3
+schnarchen,sì,russare,schnarchte,geschnarcht,hat geschnarcht,-,no,3
+gähnen,sì,sbadigliare,gähnte,gegähnt,hat gegähnt,-,no,2
+seufzen,sì,sospirare,seufzte,geseufzt,hat geseufzt,-,no,3
+stöhnen,sì,gemere,stöhnte,gestöhnt,hat gestöhnt,-,no,3
+ächzen,sì,gemere,ächzte,geächzt,hat geächzt,-,no,4

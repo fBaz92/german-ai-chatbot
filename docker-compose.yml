@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8505:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data:ro
+    restart: unless-stopped

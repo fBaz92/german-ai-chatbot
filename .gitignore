@@ -47,3 +47,5 @@ htmlcov/
 *.log
 tmp/
 temp/
+
+.env

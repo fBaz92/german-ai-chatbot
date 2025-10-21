@@ -28,3 +28,4 @@ class Functionality(ABC):
             Dictionary containing execution results
         """
         pass
+

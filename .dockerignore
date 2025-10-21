@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Docs
+*.md
+!README.md
+
+# Backups
+*.backup
+*_backup.*
+data/verbi_backup.csv
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+test_*.py
+benchmark.py
+

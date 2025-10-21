@@ -1,0 +1,3 @@
+"""
+German AI Chatbot package.
+"""

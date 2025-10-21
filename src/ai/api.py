@@ -39,13 +39,15 @@ class AIChatbotAPI(ABC):
         pass
     
     @abstractmethod
-    def check_answer(self, question: str, user_answer: str) -> Dict[str, Any]:
+    def check_answer(self, question: str, user_answer: str, correct_answer: str = None, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
         Check if the user's answer is correct.
         
         Args:
             question: The original question
             user_answer: The user's answer
+            correct_answer: The correct answer (optional, for comparison)
+            context: Additional context for validation (optional)
             
         Returns:
             Dictionary with keys:
@@ -68,3 +70,4 @@ class AIChatbotAPI(ABC):
             Formatted error response
         """
         pass
+

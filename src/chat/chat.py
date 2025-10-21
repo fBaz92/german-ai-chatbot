@@ -2,8 +2,8 @@
 Chat class for managing chatbot interactions.
 """
 from typing import List, Dict, Any, Optional
-from functionality import Functionality
-from ai_chatbot_api import AIChatbotAPI
+from src.functionalities.base import Functionality
+from src.ai.api import AIChatbotAPI
 
 
 class Chat:
