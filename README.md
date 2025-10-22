@@ -66,7 +66,7 @@ The architecture follows a clean separation of concerns:
    docker-compose up --build
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to `http://localhost:8505`
 
 That's it! The application will be running in a container with all dependencies pre-installed.
