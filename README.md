@@ -51,7 +51,17 @@ The architecture follows a clean separation of concerns:
    GEMINI_KEY=your_google_gemini_api_key_here
    ```
 
-3. **Run with Docker Compose**
+3. **Start Ollama and download model (if using local AI)**
+   ```bash
+   # Install Ollama from https://ollama.ai/ if not already installed
+   # Start Ollama server
+   ollama serve
+   
+   # In another terminal, download the recommended model
+   ollama pull gemma3:4b
+   ```
+
+4. **Run with Docker Compose**
    ```bash
    docker-compose up --build
    ```
