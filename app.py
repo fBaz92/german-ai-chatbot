@@ -28,9 +28,24 @@ if 'user_input' not in st.session_state:
     st.session_state.user_input = ""
 if 'game_mode' not in st.session_state:
     st.session_state.game_mode = "German → English"
+if 'hint_message' not in st.session_state:
+    st.session_state.hint_message = None
 
-def initialize_game(min_diff, max_diff, tense, provider, model, game_mode):
-    """Initialize the game with settings."""
+def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:str, game_mode:str) -> bool:
+    """
+    Initialize the game with settings.
+    
+    Args:
+        min_diff: Minimum difficulty level
+        max_diff: Maximum difficulty level
+        tense: Verb tense to practice
+        provider: AI provider
+        model: AI model
+        game_mode: Game mode
+
+    Returns:
+        True if game initialized successfully, False otherwise
+    """
     try:
         if "Google Gemini" in provider:  # Matches "Google Gemini (Cloud)"
             api = DatapizzaAPI(
@@ -62,8 +77,12 @@ def initialize_game(min_diff, max_diff, tense, provider, model, game_mode):
         st.error(f"Error initializing game: {e}")
         return False
 
-def get_next_sentence():
-    """Get next sentence from game."""
+def get_next_sentence() -> bool:
+    """Get next sentence from game.
+    
+    Returns:
+        True if next sentence fetched successfully, False otherwise
+    """
     if st.session_state.game:
         result = st.session_state.game.next_sentence()
         if result.get('success'):
@@ -71,14 +90,35 @@ def get_next_sentence():
             st.session_state.waiting_for_answer = True
             st.session_state.feedback = None
             st.session_state.user_input = ""
+            st.session_state.hint_message = None  # Reset hints
             return True
         else:
             st.error(result.get('error'))
             return False
     return False
 
-def check_answer(user_translation):
-    """Check user's translation."""
+def get_hint() -> bool:
+    """Get a hint for current sentence.
+    
+    Returns:
+        True if hint retrieved successfully, False otherwise
+    """
+    if st.session_state.game:
+        result = st.session_state.game.get_hint()
+        if result.get('success'):
+            st.session_state.hint_message = result['message']
+            return True
+    return False
+
+def check_answer(user_translation: str) -> bool:
+    """Check user's translation.
+    
+    Args:
+        user_translation: User's translation
+        
+    Returns:
+        True if translation is correct, False otherwise
+    """
     if st.session_state.game and user_translation.strip():
         result = st.session_state.game.check_translation(user_translation)
         st.session_state.feedback = result
@@ -201,6 +241,17 @@ elif st.session_state.current_sentence:
     
     # Input area
     if st.session_state.waiting_for_answer:
+        # Show hint if available
+        if st.session_state.hint_message:
+            st.info(st.session_state.hint_message)
+        
+        # Hint button
+        if st.button("💡 Get Hint", use_container_width=True):
+            get_hint()
+            st.rerun()
+        
+        st.markdown("---")
+        
         # Show input form
         with st.form(key="translation_form", clear_on_submit=True):
             if st.session_state.game_mode == "English → German":
@@ -261,9 +312,3 @@ else:
 
 # Footer
 st.markdown("---")
-st.markdown("""
-<div style='text-align: center'>
-    <small>💡 Tip: The game adapts to your level. Keep practicing!</small>
-</div>
-""", unsafe_allow_html=True)
-

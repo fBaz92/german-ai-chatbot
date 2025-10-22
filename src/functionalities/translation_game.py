@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional
 from src.functionalities.base import Functionality
 from src.data.verb_loader import VerbLoader
 from src.ai.datapizza_api import DatapizzaAPI, GermanSentence
+from src.utils.text_diff import simple_diff
 
 
 class TranslationGameFunctionality(Functionality):
@@ -31,6 +32,7 @@ class TranslationGameFunctionality(Functionality):
         self.attempts = 0
         self.tense = "Präsens"
         self.game_active = False
+        self.hint_level = 0  # Track how many hints given for current sentence
     
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -126,6 +128,9 @@ IMPORTANT: Respond in ENGLISH. The explanation and translation must be in Englis
         if result.get('success'):
             self.current_sentence = result['sentence']
             self.current_translation = result['translation']
+            self.current_verb_german = verb['Verbo']  # German verb
+            self.current_verb_english = verb['English']  # English verb (for hints!)
+            self.hint_level = 0  # Reset hint counter
             
             return {
                 "success": True,
@@ -186,34 +191,110 @@ IMPORTANT: Respond in ENGLISH. The explanation and translation must be in Englis
             }
         else:
             percentage = int(self.score/self.attempts*100) if self.attempts > 0 else 0
+            
+            # Create diff comparison
+            diff_text = simple_diff(user_translation, self.current_translation)
+            
             return {
                 "success": True,
                 "is_correct": False,
-                "message": f"❌ Wrong. Correct: {self.current_translation}\n{validation.get('feedback', '')}\n📊 {self.score}/{self.attempts} ({percentage}%)"
+                "message": f"❌ Wrong.\n\n{diff_text}\n\n✅ **Correct answer:** {self.current_translation}\n\n💬 {validation.get('feedback', '')}\n\n📊 Score: {self.score}/{self.attempts} ({percentage}%)"
             }
     
     def get_hint(self) -> Dict[str, Any]:
         """
-        Get a hint for the current sentence.
+        Get progressive hint for the current sentence (GER → EN).
+        Hints: 1) Verb, 2) Nouns
         
         Returns:
             Dictionary with hint
         """
-        if not self.current_translation:
+        if not self.current_translation or not self.current_sentence:
             return {
                 "success": False,
                 "error": "No active sentence."
             }
         
-        # Give first few words as hint
-        words = self.current_translation.split()
-        hint_words = words[:max(1, len(words) // 2)]
-        hint = " ".join(hint_words)
+        self.hint_level += 1
         
+        hints = []
+        
+        # Hint 1: The verb (in English - what they need to translate TO)
+        if self.hint_level >= 1:
+            verb_hint = self._extract_verb_hint()
+            hints.append(f"🔹 **Verb:** {verb_hint}")
+        
+        # Hint 2: The nouns (from English translation - what they need to say)
+        if self.hint_level >= 2:
+            nouns = self._extract_nouns_from_english()
+            if nouns:
+                hints.append(f"🔹 **Nouns:** {', '.join(nouns)}")
+        
+        # Hint 3: Give first half of translation (in English)
+        if self.hint_level >= 3:
+            words = self.current_translation.split()
+            half_words = words[:max(1, len(words) // 2)]
+            hints.append(f"🔹 **Start:** {' '.join(half_words)}...")
+        
+        # Max hints reached
+        if self.hint_level >= 4:
+            return {
+                "success": True,
+                "message": f"💡 **Full answer:** {self.current_translation}",
+                "max_hints": True
+            }
+        
+        hint_text = "\n".join(hints)
         return {
             "success": True,
-            "message": f"💡 Hint: {hint}..."
+            "message": f"💡 **Hint {self.hint_level}/3:**\n\n{hint_text}",
+            "max_hints": False
         }
+    
+    def _extract_verb_hint(self) -> str:
+        """Extract the main verb from English translation."""
+        # Try to find the verb in the English translation
+        words = self.current_translation.lower().split()
+        
+        # Common verb positions/patterns
+        common_verbs = ['is', 'are', 'am', 'was', 'were', 'have', 'has', 'had', 
+                       'do', 'does', 'did', 'will', 'would', 'can', 'could', 
+                       'eat', 'run', 'go', 'come', 'see', 'make', 'get', 'take',
+                       'approve', 'approves', 'want', 'wants', 'need', 'needs']
+        
+        for i, word in enumerate(words):
+            if word in common_verbs:
+                return word
+            # Look for verb after subject (I/you/he/she/it/we/they)
+            if i > 0 and words[i-1] in ['i', 'you', 'he', 'she', 'it', 'we', 'they', 'the']:
+                # Check if it's likely a verb (not a noun/adjective)
+                if not word in ['a', 'an', 'the', 'my', 'your']:
+                    return word
+        
+        # Fallback: use the English verb from CSV
+        return self.current_verb_english.replace('to ', '')
+    
+    def _extract_nouns_from_english(self) -> list:
+        """Extract nouns from English translation (capitalized words and common patterns)."""
+        words = self.current_translation.split()
+        nouns = []
+        
+        # Common determiners that signal a noun follows
+        determiners = ['a', 'an', 'the', 'my', 'your', 'his', 'her', 'its', 'our', 'their', 'some']
+        
+        for i, word in enumerate(words):
+            # If previous word is a determiner, this is likely a noun
+            if i > 0 and words[i-1].lower() in determiners:
+                clean_word = word.rstrip('.,!?')
+                if clean_word and not clean_word.lower() in ['is', 'are', 'was', 'were', 'have', 'has']:
+                    nouns.append(clean_word)
+            # Also check for capitalized words (proper nouns)
+            elif word[0].isupper() and i > 0:  # Skip first word
+                clean_word = word.rstrip('.,!?')
+                if clean_word:
+                    nouns.append(clean_word)
+        
+        return nouns
     
     def get_score(self) -> Dict[str, Any]:
         """

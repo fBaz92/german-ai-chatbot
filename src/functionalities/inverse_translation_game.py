@@ -6,6 +6,7 @@ from typing import Dict, Any, Optional
 from src.functionalities.base import Functionality
 from src.data.verb_loader import VerbLoader
 from src.ai.datapizza_api import DatapizzaAPI, EnglishSentence
+from src.utils.text_diff import simple_diff
 
 
 class InverseTranslationGameFunctionality(Functionality):
@@ -27,6 +28,7 @@ class InverseTranslationGameFunctionality(Functionality):
         self.attempts = 0
         self.tense = "Präsens"
         self.game_active = False
+        self.hint_level = 0  # Track how many hints given for current sentence
     
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -115,6 +117,10 @@ IMPORTANT: Respond in ENGLISH. The explanation must be in English, not German.
         if result.get('success'):
             self.current_sentence = result['sentence']
             self.current_translation = result['translation']
+            self.current_verb = verb['Verbo']  # Store German verb for hints
+            self.current_verb_english = verb['English']  # Store English verb
+            self.current_case = verb.get('Caso', 'N/A')  # Store case
+            self.hint_level = 0  # Reset hint counter
             
             return {
                 "success": True,
@@ -169,34 +175,87 @@ IMPORTANT: Respond in ENGLISH. The explanation must be in English, not German.
             }
         else:
             percentage = int(self.score/self.attempts*100) if self.attempts > 0 else 0
+            
+            # Create diff comparison
+            diff_text = simple_diff(user_translation, self.current_translation)
+            
             return {
                 "success": True,
                 "is_correct": False,
-                "message": f"❌ Wrong. Correct: {self.current_translation}\n{validation.get('feedback', '')}\n📊 {self.score}/{self.attempts} ({percentage}%)"
+                "message": f"❌ Wrong.\n\n{diff_text}\n\n✅ **Correct answer:** {self.current_translation}\n\n💬 {validation.get('feedback', '')}\n\n📊 Score: {self.score}/{self.attempts} ({percentage}%)"
             }
         
     def get_hint(self) -> Dict[str, Any]:
         """
-        Get a hint for the current sentence.
-
+        Get progressive hint for the current sentence (EN → GER).
+        Hints: 1) Verb, 2) Noun, 3) Case
+        
         Returns:
-            Dictionary with the hint
+            Dictionary with hint
         """
         if not self.current_translation:
             return {
                 "success": False,
                 "error": "No active sentence."
             }
-            
-        # Give first few words as hint
-        words = self.current_translation.split()
-        hint_words = words[:max(1, len(words) // 2)]
-        hint = " ".join(hint_words)
         
+        self.hint_level += 1
+        
+        hints = []
+        
+        # Hint 1: The German verb
+        if self.hint_level >= 1:
+            hints.append(f"🔹 **Verb:** {self.current_verb}")
+        
+        # Hint 2: Nouns from the German translation
+        if self.hint_level >= 2:
+            nouns = self._extract_nouns_from_german()
+            if nouns:
+                hints.append(f"🔹 **Nouns:** {', '.join(nouns)}")
+            else:
+                hints.append(f"🔹 **Tip:** No nouns in this sentence")
+        
+        # Hint 3: The case
+        if self.hint_level >= 3:
+            if self.current_case and self.current_case != 'N/A':
+                hints.append(f"🔹 **Case:** {self.current_case}")
+            else:
+                hints.append(f"🔹 **Case:** No specific case for this verb")
+        
+        # Hint 4: First half of answer
+        if self.hint_level >= 4:
+            words = self.current_translation.split()
+            half_words = words[:max(1, len(words) // 2)]
+            hints.append(f"🔹 **Start:** {' '.join(half_words)}...")
+        
+        # Max hints reached
+        if self.hint_level >= 5:
+            return {
+                "success": True,
+                "message": f"💡 **Full answer:** {self.current_translation}",
+                "max_hints": True
+            }
+        
+        hint_text = "\n".join(hints)
         return {
             "success": True,
-            "message": f"💡 Hint: {hint}..."
+            "message": f"💡 **Hint {self.hint_level}/4:**\n\n{hint_text}",
+            "max_hints": False
         }
+    
+    def _extract_nouns_from_german(self) -> list:
+        """Extract nouns from German sentence (capitalized words)."""
+        words = self.current_translation.split()
+        # In German, nouns are capitalized
+        nouns = []
+        for i, word in enumerate(words):
+            # Skip first word and articles
+            if i > 0 and word[0].isupper() and word not in ['Der', 'Die', 'Das', 'Ein', 'Eine', 'Den', 'Dem', 'Des']:
+                # Remove punctuation
+                clean_word = word.rstrip('.,!?')
+                if clean_word:
+                    nouns.append(clean_word)
+        return nouns
         
     def get_score(self) -> Dict[str, Any]:
         """
