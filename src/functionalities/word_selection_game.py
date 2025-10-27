@@ -6,7 +6,8 @@ import random
 from typing import Dict, Any, Optional, List
 from src.functionalities.base import Functionality
 from src.data.verb_loader import VerbLoader
-from src.ai.datapizza_api import DatapizzaAPI, WordSelectionExercise
+from src.ai.datapizza_api import DatapizzaAPI
+from src.models.game_models import WordSelectionExercise
 
 
 class WordSelectionGameFunctionality(Functionality):

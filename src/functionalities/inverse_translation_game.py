@@ -5,7 +5,8 @@ Interactive game where users translate English sentences to German.
 from typing import Dict, Any, Optional
 from src.functionalities.base import Functionality
 from src.data.verb_loader import VerbLoader
-from src.ai.datapizza_api import DatapizzaAPI, EnglishSentence
+from src.ai.datapizza_api import DatapizzaAPI
+from src.models.game_models import EnglishSentence, AnswerValidation
 from src.utils.text_diff import simple_diff
 
 
@@ -135,6 +136,69 @@ IMPORTANT: Respond in ENGLISH. The explanation must be in English, not German.
                 "error": result.get('explanation', 'Error generating sentence')
             }
         
+    def _validate_translation_with_ai(self, user_translation: str) -> Dict[str, Any]:
+        """
+        Use AI to validate the user's translation.
+
+        Args:
+            user_translation: User's translation
+
+        Returns:
+            Dictionary with validation results
+        """
+        validation_prompt = f"""
+Question: Translate to German: {self.current_sentence}
+
+User's answer: {user_translation}
+Correct answer: {self.current_translation}
+
+Compare the user's answer with the correct answer.
+
+IMPORTANT:
+- Be strict in your evaluation
+- If the verbs are different, mark as INCORRECT
+- If the core meaning changed, mark as INCORRECT
+- Grammar and tense must be correct
+- Minor variations in word choice are OK if meaning is preserved
+
+RESPOND IN ENGLISH ONLY. All feedback, explanations, and messages must be in English.
+
+Return a JSON object with:
+- is_correct: true/false
+- feedback: Brief message for the user (IN ENGLISH)
+- correct_answer: The correct answer (IN GERMAN)
+- explanation: Why it's correct/incorrect (IN ENGLISH)
+"""
+
+        try:
+            response = self.api.client.structured_response(
+                input=validation_prompt,
+                output_cls=AnswerValidation
+            )
+
+            if response.structured_data and len(response.structured_data) > 0:
+                validation = response.structured_data[0]
+                return {
+                    "is_correct": validation.is_correct,
+                    "feedback": validation.feedback,
+                    "correct_answer": validation.correct_answer,
+                    "explanation": validation.explanation
+                }
+            else:
+                return {
+                    "is_correct": False,
+                    "feedback": "Could not validate the answer.",
+                    "correct_answer": self.current_translation,
+                    "explanation": ""
+                }
+        except Exception as e:
+            return {
+                "is_correct": False,
+                "feedback": f"Validation error: {str(e)}",
+                "correct_answer": self.current_translation,
+                "explanation": ""
+            }
+
     def check_translation(self, user_translation: str) -> Dict[str, Any]:
         """
         Check if the user's translation is correct.
@@ -150,18 +214,9 @@ IMPORTANT: Respond in ENGLISH. The explanation must be in English, not German.
                 "success": False,
                 "error": "API not configured."
             }
-            
+
         # Validate with AI - pass correct answer explicitly
-        validation = self.api.check_answer(
-            question=f"Translate to German: {self.current_sentence}",
-            user_answer=user_translation,
-            correct_answer=self.current_translation,
-            context={
-                "task": "translation",
-                "source_language": "English",
-                "target_language": "German"
-            }
-        )
+        validation = self._validate_translation_with_ai(user_translation)
         
         self.attempts += 1
         
