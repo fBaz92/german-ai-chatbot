@@ -5,6 +5,7 @@ import streamlit as st
 from src.ai.datapizza_api import DatapizzaAPI
 from src.functionalities.translation_game import TranslationGameFunctionality
 from src.functionalities.inverse_translation_game import InverseTranslationGameFunctionality
+from src.functionalities.word_selection_game import WordSelectionGameFunctionality
 
 # Page config
 st.set_page_config(
@@ -30,6 +31,10 @@ if 'game_mode' not in st.session_state:
     st.session_state.game_mode = "German → English"
 if 'hint_message' not in st.session_state:
     st.session_state.hint_message = None
+if 'available_words' not in st.session_state:
+    st.session_state.available_words = []
+if 'selected_words' not in st.session_state:
+    st.session_state.selected_words = []
 
 def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:str, game_mode:str) -> bool:
     """
@@ -62,6 +67,8 @@ def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:s
         # Choose game type based on mode
         if game_mode == "English → German":
             game = InverseTranslationGameFunctionality(api=api)
+        elif game_mode == "Word Selection (EN → DE)":
+            game = WordSelectionGameFunctionality(api=api)
         else:  # German → English
             game = TranslationGameFunctionality(api=api)
         
@@ -79,14 +86,21 @@ def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:s
 
 def get_next_sentence() -> bool:
     """Get next sentence from game.
-    
+
     Returns:
         True if next sentence fetched successfully, False otherwise
     """
     if st.session_state.game:
         result = st.session_state.game.next_sentence()
         if result.get('success'):
-            st.session_state.current_sentence = result['sentence']
+            # For word selection game, handle differently
+            if st.session_state.game_mode == "Word Selection (EN → DE)":
+                st.session_state.current_sentence = result['english_sentence']
+                st.session_state.available_words = result['all_words']
+                st.session_state.selected_words = []
+            else:
+                st.session_state.current_sentence = result['sentence']
+
             st.session_state.waiting_for_answer = True
             st.session_state.feedback = None
             st.session_state.user_input = ""
@@ -112,10 +126,10 @@ def get_hint() -> bool:
 
 def check_answer(user_translation: str) -> bool:
     """Check user's translation.
-    
+
     Args:
         user_translation: User's translation
-        
+
     Returns:
         True if translation is correct, False otherwise
     """
@@ -126,9 +140,23 @@ def check_answer(user_translation: str) -> bool:
         return result.get('is_correct', False)
     return False
 
+
+def check_word_selection() -> bool:
+    """Check user's word selection for word selection game.
+
+    Returns:
+        True if word selection is correct, False otherwise
+    """
+    if st.session_state.game and st.session_state.selected_words:
+        result = st.session_state.game.check_word_selection(st.session_state.selected_words)
+        st.session_state.feedback = result
+        st.session_state.waiting_for_answer = False
+        return result.get('is_correct', False)
+    return False
+
 # Main UI
 st.title("🇩🇪 German Translation Game")
-st.markdown("Practice translating German sentences to English!")
+st.markdown("Practice translating German sentences with multiple game modes!")
 
 # Sidebar - Settings
 with st.sidebar:
@@ -138,7 +166,7 @@ with st.sidebar:
     st.subheader("🎮 Game Mode")
     game_mode = st.radio(
         "Translation direction",
-        ["German → English", "English → German"],
+        ["German → English", "English → German", "Word Selection (EN → DE)"],
         key="game_mode_selector"
     )
     
@@ -217,30 +245,100 @@ if st.session_state.game is None:
     st.info("👈 Configure settings and click 'Start New Game' to begin!")
     st.markdown("""
     ### How to play:
-    1. Set your difficulty level (1=easiest, 5=hardest)
-    2. Choose a verb tense to practice
-    3. Click 'Start New Game'
-    4. Translate the German sentences to English
+    1. Choose your game mode:
+       - **German → English**: Type the English translation
+       - **English → German**: Type the German translation
+       - **Word Selection (EN → DE)**: Select German words in order
+    2. Set your difficulty level (1=easiest, 5=hardest)
+    3. Choose a verb tense to practice
+    4. Click 'Start New Game'
     5. Get immediate feedback!
-    
+
     **Tips:**
     - Start with difficulty 1-2 if you're a beginner
     - Use Präsens (present tense) for easier practice
+    - Try Word Selection mode for a fun challenge!
     - The game continues until you stop it!
     """)
 
 elif st.session_state.current_sentence:
     # Display current sentence
     st.markdown("### Translate this sentence:")
-    
+
     # Show appropriate flag based on game mode
     if st.session_state.game_mode == "English → German":
         st.markdown(f"## 🇬🇧 {st.session_state.current_sentence}")
+    elif st.session_state.game_mode == "Word Selection (EN → DE)":
+        st.markdown(f"## 🇬🇧 {st.session_state.current_sentence}")
     else:
         st.markdown(f"## 🇩🇪 {st.session_state.current_sentence}")
-    
-    # Input area
-    if st.session_state.waiting_for_answer:
+
+    # Word Selection Game UI
+    if st.session_state.game_mode == "Word Selection (EN → DE)" and st.session_state.waiting_for_answer:
+        # Show hint if available
+        if st.session_state.hint_message:
+            st.info(st.session_state.hint_message)
+
+        # Hint button
+        if st.button("💡 Get Hint", use_container_width=True):
+            get_hint()
+            st.rerun()
+
+        st.markdown("---")
+        st.markdown("### Select words in order to build the German translation:")
+
+        # Display selected words
+        if st.session_state.selected_words:
+            st.markdown("**Your answer:**")
+            selected_text = " ".join(st.session_state.selected_words)
+            st.markdown(f"### 🇩🇪 {selected_text}")
+
+            # Remove last word button
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                if st.button("⬅️ Remove Last Word", use_container_width=True):
+                    if st.session_state.selected_words:
+                        st.session_state.selected_words.pop()
+                        st.rerun()
+            with col2:
+                if st.button("🔄 Reset", use_container_width=True):
+                    st.session_state.selected_words = []
+                    st.rerun()
+        else:
+            st.info("👆 Click words below to build your answer")
+
+        st.markdown("---")
+        st.markdown("**Available words:**")
+
+        # Display available words as buttons in a grid
+        # Create rows of buttons (5 words per row)
+        words_per_row = 5
+        available_words = st.session_state.available_words
+
+        for i in range(0, len(available_words), words_per_row):
+            cols = st.columns(words_per_row)
+            for j, col in enumerate(cols):
+                if i + j < len(available_words):
+                    word = available_words[i + j]
+                    with col:
+                        # Disable if already selected
+                        if word in st.session_state.selected_words:
+                            st.button(word, disabled=True, key=f"word_{i}_{j}", use_container_width=True)
+                        else:
+                            if st.button(word, key=f"word_{i}_{j}", use_container_width=True):
+                                st.session_state.selected_words.append(word)
+                                st.rerun()
+
+        st.markdown("---")
+
+        # Submit button
+        if st.session_state.selected_words:
+            if st.button("✅ Check Answer", use_container_width=True, type="primary"):
+                is_correct = check_word_selection()
+                st.rerun()
+
+    # Input area for text-based games
+    elif st.session_state.waiting_for_answer and st.session_state.game_mode != "Word Selection (EN → DE)":
         # Show hint if available
         if st.session_state.hint_message:
             st.info(st.session_state.hint_message)
@@ -298,6 +396,9 @@ elif st.session_state.current_sentence:
                 if st.button("🔄 Try Again", use_container_width=True):
                     st.session_state.waiting_for_answer = True
                     st.session_state.feedback = None
+                    # Reset selected words for word selection game
+                    if st.session_state.game_mode == "Word Selection (EN → DE)":
+                        st.session_state.selected_words = []
                     st.rerun()
             with col2:
                 if st.button("➡️ Skip", use_container_width=True):
