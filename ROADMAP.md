@@ -12,6 +12,9 @@ This document outlines planned features and game modes for future implementation
 - [x] **Article Selection** - Choose correct German article (der/die/das) with case variations
 - [x] **Fill-in-the-Blank** - Complete German sentences with missing words
 - [x] **Error Detection** - Find and correct errors in German sentences
+- [x] **Verb Conjugation Challenge** - Conjugate German verbs with different pronouns and tenses
+- [x] **Speed Translation Race** - Timed translation game with points, combos, and time bonuses
+- [x] **Conversation Builder** - Multi-turn conversation scenarios with contextual responses
 
 ---
 
@@ -20,7 +23,7 @@ This document outlines planned features and game modes for future implementation
 ### High Priority (Educational Value + Ease of Implementation)
 
 #### 1. **Verb Conjugation Challenge**
-**Status:** Not Started
+**Status:** ✅ Implemented
 **Difficulty:** Easy (1-2 hours)
 **Description:**
 - Show infinitive verb + pronoun + tense
@@ -114,7 +117,7 @@ This document outlines planned features and game modes for future implementation
 ---
 
 #### 6. **Conversation Builder**
-**Status:** Not Started
+**Status:** ✅ Implemented
 **Difficulty:** Hard (6-8 hours)
 **Description:**
 - AI presents realistic scenario (restaurant, shopping, travel)
@@ -135,7 +138,7 @@ This document outlines planned features and game modes for future implementation
 ### Low Priority (Nice to Have)
 
 #### 7. **Speed Translation Race**
-**Status:** Not Started
+**Status:** ✅ Implemented
 **Difficulty:** Medium (3-4 hours)
 **Description:**
 - Short words/phrases appear rapidly (every 5-10 seconds)

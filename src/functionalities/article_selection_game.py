@@ -170,7 +170,8 @@ RESPOND IN ENGLISH. All explanations must be in English.
                     "noun": self.current_noun,
                     "articles": self.all_articles,
                     "case": self.case,
-                    "context_sentence": self.context_sentence,
+                    "meaning": self.meaning,
+                    "example_sentence": self.example_sentence,
                     "message": f"Select the correct article for '{self.current_noun}' ({self.case})"
                 }
             else:

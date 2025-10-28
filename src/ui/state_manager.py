@@ -11,6 +11,9 @@ from src.functionalities.word_selection_game import WordSelectionGameFunctionali
 from src.functionalities.article_selection_game import ArticleSelectionGameFunctionality
 from src.functionalities.fill_blank_game import FillBlankGameFunctionality
 from src.functionalities.error_detection_game import ErrorDetectionGameFunctionality
+from src.functionalities.verb_conjugation_game import VerbConjugationGameFunctionality
+from src.functionalities.speed_translation_game import SpeedTranslationGameFunctionality
+from src.functionalities.conversation_builder_game import ConversationBuilderGameFunctionality
 
 
 class StateManager:
@@ -90,6 +93,15 @@ class StateManager:
             elif game_mode == "Error Detection":
                 game = ErrorDetectionGameFunctionality(api=api)
                 game.start_game(difficulty=(min_diff, max_diff), tense=tense)
+            elif game_mode == "Verb Conjugation Challenge":
+                game = VerbConjugationGameFunctionality(api=api)
+                game.start_game(difficulty=(min_diff, max_diff), tense=tense)
+            elif game_mode == "Speed Translation Race":
+                game = SpeedTranslationGameFunctionality(api=api)
+                game.start_game(difficulty=(min_diff, max_diff))
+            elif game_mode == "Conversation Builder":
+                game = ConversationBuilderGameFunctionality(api=api)
+                game.start_game(difficulty=(min_diff, max_diff))
             else:  # German → English
                 game = TranslationGameFunctionality(api=api)
                 game.start_game(difficulty=(min_diff, max_diff), tense=tense)
@@ -113,9 +125,11 @@ class StateManager:
             True if next exercise fetched successfully, False otherwise
         """
         if st.session_state.game:
-            # Article Selection, Fill Blank, and Error Detection use next_exercise()
+            # Games that use next_exercise() instead of next_sentence()
             if st.session_state.game_mode in ["Article Selection (der/die/das)",
-                                               "Fill-in-the-Blank", "Error Detection"]:
+                                               "Fill-in-the-Blank", "Error Detection",
+                                               "Verb Conjugation Challenge", "Speed Translation Race",
+                                               "Conversation Builder"]:
                 result = st.session_state.game.next_exercise()
             else:
                 result = st.session_state.game.next_sentence()
@@ -161,16 +175,24 @@ class StateManager:
     @staticmethod
     def check_answer(user_translation: str) -> bool:
         """
-        Check user's translation.
+        Check user's answer/translation.
 
         Args:
-            user_translation: User's translation
+            user_translation: User's answer/translation
 
         Returns:
-            True if translation is correct, False otherwise
+            True if answer is correct, False otherwise
         """
         if st.session_state.game and user_translation.strip():
-            result = st.session_state.game.check_translation(user_translation)
+            # Different games use different method names
+            # Try check_translation first (most common), then check_answer
+            if hasattr(st.session_state.game, 'check_translation'):
+                result = st.session_state.game.check_translation(user_translation)
+            elif hasattr(st.session_state.game, 'check_answer'):
+                result = st.session_state.game.check_answer(user_translation)
+            else:
+                return False
+
             st.session_state.feedback = result
             st.session_state.waiting_for_answer = False
             return result.get('is_correct', False)

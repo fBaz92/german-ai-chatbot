@@ -20,6 +20,11 @@ def render_welcome():
     - **Article Selection**: Choose the correct article (der/die/das) with different cases
     - **Fill-in-the-Blank**: Complete German sentences with missing words
     - **Error Detection**: Find and correct errors in German sentences
+    - **Verb Conjugation Challenge**: Practice conjugating German verbs with different pronouns and tenses
+
+    **Advanced Games:**
+    - **Speed Translation Race**: Translate words and phrases quickly for bonus points and combos!
+    - **Conversation Builder**: Navigate realistic scenarios by choosing appropriate German responses
 
     ### 📝 How to Start:
     1. Select a game mode from the dropdown above
@@ -31,6 +36,9 @@ def render_welcome():
     **Tips:**
     - Start with difficulty 1-2 if you're a beginner
     - Article Selection is great for mastering der/die/das
+    - Verb Conjugation builds muscle memory for verb forms
+    - Speed Translation Race tests your fluency under pressure
+    - Conversation Builder prepares you for real-world scenarios
     - Use hints if you get stuck (💡 button)
     - Track your progress in the sidebar!
     """)

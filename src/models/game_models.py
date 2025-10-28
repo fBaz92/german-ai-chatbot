@@ -63,3 +63,41 @@ class ErrorDetectionExercise(BaseModel):
     error_location: str = Field(description="The incorrect word or phrase")
     explanation: str = Field(description="Explanation of the error and correction")
     english_translation: str = Field(description="English translation of correct sentence")
+
+
+class VerbConjugationExercise(BaseModel):
+    """Model for verb conjugation game."""
+    infinitive: str = Field(description="German verb in infinitive form")
+    english_meaning: str = Field(description="English translation of the verb")
+    pronoun: str = Field(description="German pronoun (ich/du/er/sie/es/wir/ihr/sie/Sie)")
+    tense: str = Field(description="Tense to conjugate (Präsens/Präteritum/Perfekt/etc)")
+    correct_conjugation: str = Field(description="Correct conjugated form")
+    example_sentence: str = Field(description="Example sentence using the conjugated verb")
+    example_translation: str = Field(description="English translation of example sentence")
+    explanation: str = Field(description="Brief explanation of conjugation pattern")
+
+
+class SpeedTranslationExercise(BaseModel):
+    """Model for speed translation game."""
+    german_phrase: str = Field(description="German word or short phrase to translate")
+    english_translation: str = Field(description="Correct English translation")
+    difficulty: int = Field(description="Difficulty level 1-5 (1=easiest, affects time limit)")
+    category: str = Field(description="Category: food/travel/common/verbs/etc")
+
+
+class ConversationTurn(BaseModel):
+    """Model for a single turn in conversation."""
+    speaker: str = Field(description="Who is speaking: 'ai' or 'user'")
+    german_text: str = Field(description="German dialogue text")
+    english_translation: str = Field(description="English translation")
+    options: list[str] = Field(default=[], description="Response options for user (empty for AI turns)")
+    correct_option_index: int = Field(default=-1, description="Index of correct option (0-based, -1 for AI turns)")
+    explanation: str = Field(default="", description="Why this option is correct")
+
+
+class ConversationExercise(BaseModel):
+    """Model for conversation builder game."""
+    scenario: str = Field(description="Conversation scenario (restaurant/shopping/travel/etc)")
+    scenario_description: str = Field(description="Brief description of the situation in English")
+    turns: list[ConversationTurn] = Field(description="List of conversation turns (AI and user alternating)")
+    learning_focus: str = Field(description="What this conversation teaches (formal/informal/vocab/etc)")

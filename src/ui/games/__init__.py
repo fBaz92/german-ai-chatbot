@@ -7,6 +7,9 @@ from src.ui.games.word_selection_ui import WordSelectionUI
 from src.ui.games.article_selection_ui import ArticleSelectionUI
 from src.ui.games.fill_blank_ui import FillBlankUI
 from src.ui.games.error_detection_ui import ErrorDetectionUI
+from src.ui.games.verb_conjugation_ui import VerbConjugationUI
+from src.ui.games.speed_translation_ui import SpeedTranslationUI
+from src.ui.games.conversation_builder_ui import ConversationBuilderUI
 
 
 # Game registry mapping game mode names to UI classes
@@ -17,6 +20,9 @@ GAME_UI_REGISTRY = {
     "Article Selection (der/die/das)": ArticleSelectionUI,
     "Fill-in-the-Blank": FillBlankUI,
     "Error Detection": ErrorDetectionUI,
+    "Verb Conjugation Challenge": VerbConjugationUI,
+    "Speed Translation Race": SpeedTranslationUI,
+    "Conversation Builder": ConversationBuilderUI,
 }
 
 

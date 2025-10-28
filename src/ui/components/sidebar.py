@@ -44,7 +44,11 @@ def render_sidebar(game: Optional[object] = None, api: Optional[object] = None) 
                 "Word Selection (EN → DE)",
                 "Article Selection (der/die/das)",
                 "Fill-in-the-Blank",
-                "Error Detection"
+                "Error Detection",
+                "Verb Conjugation Challenge",
+                "--- Advanced Games ---",
+                "Speed Translation Race",
+                "Conversation Builder"
             ],
             key="game_mode_selector"
         )
