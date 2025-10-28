@@ -1,0 +1,229 @@
+"""
+Unit tests for InverseTranslationGameFunctionality.
+"""
+import unittest
+from unittest.mock import Mock, patch
+from src.functionalities.inverse_translation_game import InverseTranslationGameFunctionality
+from src.models.game_models import EnglishSentence, AnswerValidation
+
+
+class TestInverseTranslationGameFunctionality(unittest.TestCase):
+    """Test suite for InverseTranslationGameFunctionality."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.mock_api = Mock()
+        self.mock_api.client = Mock()
+        self.game = InverseTranslationGameFunctionality(api=self.mock_api)
+
+    def test_init(self):
+        """Test initialization."""
+        self.assertIsNotNone(self.game.api)
+        self.assertIsNotNone(self.game.verb_loader)
+        self.assertIsNone(self.game.current_sentence)
+        self.assertIsNone(self.game.current_translation)
+        self.assertEqual(self.game.difficulty_range, (1, 5))
+        self.assertEqual(self.game.score, 0)
+        self.assertEqual(self.game.attempts, 0)
+        self.assertEqual(self.game.tense, "Präsens")
+        self.assertFalse(self.game.game_active)
+        self.assertEqual(self.game.hint_level, 0)
+
+    def test_get_name(self):
+        """Test get_name method."""
+        self.assertEqual(self.game.get_name(), "inverse_translation_game")
+
+    def test_start_game(self):
+        """Test start_game method."""
+        result = self.game.start_game(difficulty=(1, 3), tense="Perfekt")
+
+        self.assertTrue(result['success'])
+        self.assertEqual(self.game.difficulty_range, (1, 3))
+        self.assertEqual(self.game.tense, "Perfekt")
+        self.assertEqual(self.game.score, 0)
+        self.assertEqual(self.game.attempts, 0)
+        self.assertTrue(self.game.game_active)
+
+    @patch('src.functionalities.inverse_translation_game.VerbLoader')
+    def test_next_sentence_success(self, mock_verb_loader_class):
+        """Test next_sentence with successful generation."""
+        mock_verb_loader = Mock()
+        mock_verb_loader.get_random_verb.return_value = {
+            'Verbo': 'gehen',
+            'English': 'to go',
+            'Frequenza': 2,
+            'Caso': 'N/A'
+        }
+        self.game.verb_loader = mock_verb_loader
+
+        mock_sentence = EnglishSentence(
+            sentence="I go to school.",
+            translation="Ich gehe zur Schule.",
+            explanation="Simple present tense."
+        )
+        mock_response = Mock()
+        mock_response.structured_data = [mock_sentence]
+        self.mock_api.client.structured_response.return_value = mock_response
+
+        result = self.game.next_sentence()
+
+        self.assertTrue(result['success'])
+        self.assertEqual(result['sentence'], "I go to school.")
+        self.assertEqual(self.game.current_sentence, "I go to school.")
+        self.assertEqual(self.game.current_translation, "Ich gehe zur Schule.")
+
+    def test_next_sentence_no_api(self):
+        """Test next_sentence without API."""
+        game_no_api = InverseTranslationGameFunctionality(api=None)
+        result = game_no_api.next_sentence()
+
+        self.assertFalse(result['success'])
+        self.assertIn("API not configured", result['error'])
+
+    def test_check_translation_no_sentence(self):
+        """Test check_translation without active sentence."""
+        result = self.game.check_translation("Ich gehe zur Schule")
+
+        self.assertFalse(result['success'])
+        self.assertIn("No active sentence", result['error'])
+
+    def test_check_translation_correct(self):
+        """Test check_translation with correct answer."""
+        self.game.current_sentence = "I go to school."
+        self.game.current_translation = "Ich gehe zur Schule."
+
+        mock_validation = AnswerValidation(
+            is_correct=True,
+            feedback="Perfect!",
+            correct_answer="Ich gehe zur Schule.",
+            explanation="Correct."
+        )
+        mock_response = Mock()
+        mock_response.structured_data = [mock_validation]
+        self.mock_api.client.structured_response.return_value = mock_response
+
+        result = self.game.check_translation("Ich gehe zur Schule.")
+
+        self.assertTrue(result['success'])
+        self.assertTrue(result['is_correct'])
+        self.assertEqual(self.game.score, 1)
+        self.assertEqual(self.game.attempts, 1)
+
+    def test_check_translation_incorrect(self):
+        """Test check_translation with incorrect answer."""
+        self.game.current_sentence = "I go to school."
+        self.game.current_translation = "Ich gehe zur Schule."
+
+        mock_validation = AnswerValidation(
+            is_correct=False,
+            feedback="Not quite.",
+            correct_answer="Ich gehe zur Schule.",
+            explanation="Check article."
+        )
+        mock_response = Mock()
+        mock_response.structured_data = [mock_validation]
+        self.mock_api.client.structured_response.return_value = mock_response
+
+        result = self.game.check_translation("Ich gehe zu Schule.")
+
+        self.assertTrue(result['success'])
+        self.assertFalse(result['is_correct'])
+        self.assertEqual(self.game.score, 0)
+        self.assertEqual(self.game.attempts, 1)
+
+    def test_get_hint_no_sentence(self):
+        """Test get_hint without active sentence."""
+        result = self.game.get_hint()
+
+        self.assertFalse(result['success'])
+        self.assertIn("No active sentence", result['error'])
+
+    def test_get_hint_progression(self):
+        """Test get_hint progression."""
+        self.game.current_translation = "Ich gehe zur Schule."
+        self.game.current_verb = "gehen"
+        self.game.current_case = "Dativ"
+
+        # Hint 1
+        result1 = self.game.get_hint()
+        self.assertTrue(result1['success'])
+        self.assertEqual(self.game.hint_level, 1)
+        self.assertIn("Verb", result1['message'])
+
+        # Hint 2
+        result2 = self.game.get_hint()
+        self.assertTrue(result2['success'])
+        self.assertEqual(self.game.hint_level, 2)
+
+        # Hint 3
+        result3 = self.game.get_hint()
+        self.assertTrue(result3['success'])
+        self.assertEqual(self.game.hint_level, 3)
+
+        # Hint 4
+        result4 = self.game.get_hint()
+        self.assertTrue(result4['success'])
+        self.assertEqual(self.game.hint_level, 4)
+
+        # Hint 5 - Full answer
+        result5 = self.game.get_hint()
+        self.assertTrue(result5['success'])
+        self.assertTrue(result5['max_hints'])
+
+    def test_extract_nouns_from_german(self):
+        """Test _extract_nouns_from_german method."""
+        self.game.current_translation = "Ich gehe zur Schule mit dem Freund."
+
+        nouns = self.game._extract_nouns_from_german()
+        self.assertIsInstance(nouns, list)
+        self.assertIn("Schule", nouns)
+        self.assertIn("Freund", nouns)
+
+    def test_get_score(self):
+        """Test get_score method."""
+        self.game.score = 5
+        self.game.attempts = 8
+
+        result = self.game.get_score()
+
+        self.assertTrue(result['success'])
+        self.assertIn("5/8", result['message'])
+
+    def test_stop_game(self):
+        """Test stop_game method."""
+        self.game.score = 6
+        self.game.attempts = 10
+
+        result = self.game.stop_game()
+
+        self.assertTrue(result['success'])
+        self.assertFalse(self.game.game_active)
+        self.assertIn("6/10", result['message'])
+
+    def test_execute_start_game(self):
+        """Test execute for start game."""
+        result = self.game.execute({'question': 'start game'})
+
+        self.assertEqual(result['functionality'], 'inverse_translation_game')
+        self.assertTrue(self.game.game_active)
+
+    def test_execute_hint(self):
+        """Test execute for hint."""
+        self.game.current_translation = "Test"
+        self.game.current_verb = "test"
+        self.game.current_case = "N/A"
+
+        result = self.game.execute({'question': 'hint'})
+
+        self.assertEqual(result['functionality'], 'inverse_translation_game')
+
+    def test_get_help(self):
+        """Test get_help method."""
+        help_text = self.game.get_help()
+
+        self.assertIsInstance(help_text, str)
+        self.assertIn("Inverse Translation", help_text)
+
+
+if __name__ == '__main__':
+    unittest.main()
