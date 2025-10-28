@@ -39,9 +39,11 @@ class ArticleExercise(BaseModel):
     noun: str = Field(description="The German noun (without article)")
     correct_article: str = Field(description="The correct article (der/die/das/den/dem/des)")
     case: str = Field(description="The grammatical case (Nominativ/Akkusativ/Dativ/Genitiv)")
-    context_sentence: str = Field(description="Example sentence using the noun with context")
+    meaning: str = Field(description="English meaning of the noun")
+    example_sentence: str = Field(description="Example German sentence using the noun with the correct article in this case")
+    example_translation: str = Field(description="English translation of the example sentence")
     distractor_articles: list[str] = Field(description="Incorrect article options (2-3 alternatives)")
-    explanation: str = Field(description="Explanation of why this article is correct")
+    explanation: str = Field(description="Brief explanation of the grammatical rule")
 
 
 class FillInBlankExercise(BaseModel):

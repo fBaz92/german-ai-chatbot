@@ -29,7 +29,9 @@ class ArticleSelectionGameFunctionality(Functionality):
         self.current_noun = None
         self.correct_article = None
         self.all_articles = []
-        self.context_sentence = None
+        self.meaning = None
+        self.example_sentence = None
+        self.example_translation = None
         self.explanation = None
         self.difficulty_range = (1, 5)
         self.score = 0
@@ -102,24 +104,39 @@ Create an exercise with:
 1. The noun (without article) - MUST BE: {noun['Sostantivo']}
 2. The correct article for a specific case based on the noun's gender and the case
 3. The grammatical case (Nominativ/Akkusativ/Dativ/Genitiv)
-4. A context sentence showing the noun used with that case
-5. 2-3 distractor articles (incorrect but plausible options for that case)
-6. Clear explanation of why this article is correct
+4. The meaning (English translation of the noun)
+5. An example German sentence using this noun with the correct article in this specific case
+6. English translation of the example sentence
+7. 2 distractor articles - MUST BE valid articles for the SAME case but incorrect for this noun's gender
+8. Brief grammatical explanation (1 sentence)
 
 Case selection by difficulty:
 - Difficulty 1-2: Use Nominativ case only
 - Difficulty 3-4: Use Akkusativ case (for masculine nouns, article changes from der to den)
 - Difficulty 5: Use Dativ or Genitiv case
 
-Article declension reminder:
-- Masculine: Nominativ=der, Akkusativ=den, Dativ=dem, Genitiv=des
-- Feminine: Nominativ=die, Akkusativ=die, Dativ=der, Genitiv=der
-- Neuter: Nominativ=das, Akkusativ=das, Dativ=dem, Genitiv=des
+Article declension table:
+               Masculine   Feminine   Neuter
+Nominativ:     der         die        das
+Akkusativ:     den         die        das
+Dativ:         dem         der        dem
+Genitiv:       des         der        des
 
-Example if noun is "Hund" (masculine, der):
-- For Nominativ: correct_article="der", distractor_articles=["die", "das"]
-- For Akkusativ: correct_article="den", distractor_articles=["der", "dem"]
-- For Dativ: correct_article="dem", distractor_articles=["den", "der"]
+CRITICAL RULE FOR DISTRACTOR ARTICLES:
+- Distractors MUST be other articles from the SAME case, just for different genders
+- Example: If testing Akkusativ masculine (correct="den"), distractors MUST be ["die", "das"] (other Akkusativ articles)
+- Example: If testing Dativ feminine (correct="der"), distractors MUST be ["dem"] (other Dativ article, noting die→der in Dativ)
+- NEVER include articles from different cases as distractors!
+
+Examples if noun is "Hund" (masculine, der):
+- For Nominativ: correct_article="der", distractor_articles=["die", "das"]  (all Nominativ)
+- For Akkusativ: correct_article="den", distractor_articles=["die", "das"]  (all Akkusativ)
+- For Dativ: correct_article="dem", distractor_articles=["der"]  (all Dativ - note: der appears twice in Dativ table)
+
+Examples if noun is "Frau" (feminine, die):
+- For Nominativ: correct_article="die", distractor_articles=["der", "das"]  (all Nominativ)
+- For Akkusativ: correct_article="die", distractor_articles=["den", "das"]  (all Akkusativ)
+- For Dativ: correct_article="der", distractor_articles=["dem"]  (all Dativ)
 
 RESPOND IN ENGLISH. All explanations must be in English.
 """
@@ -136,7 +153,9 @@ RESPOND IN ENGLISH. All explanations must be in English.
                 # Store data
                 self.current_noun = exercise_data.noun
                 self.correct_article = exercise_data.correct_article
-                self.context_sentence = exercise_data.context_sentence
+                self.meaning = exercise_data.meaning
+                self.example_sentence = exercise_data.example_sentence
+                self.example_translation = exercise_data.example_translation
                 self.explanation = exercise_data.explanation
                 self.case = exercise_data.case
 
@@ -191,7 +210,7 @@ RESPOND IN ENGLISH. All explanations must be in English.
             return {
                 "success": True,
                 "is_correct": True,
-                "message": f"✅ Correct! {self.correct_article} {self.current_noun}\n\n{self.explanation}\n\n({self.score}/{self.attempts} = {percentage}%)",
+                "message": f"✅ Correct! **{self.correct_article} {self.current_noun}**\n\n📖 **Meaning:** {self.meaning}\n\n💬 **{self.explanation}**\n\n📝 **Example:**\n🇩🇪 {self.example_sentence}\n🇬🇧 {self.example_translation}\n\n📊 Score: {self.score}/{self.attempts} ({percentage}%)",
                 "correct_answer": f"{self.correct_article} {self.current_noun}"
             }
         else:
@@ -200,7 +219,7 @@ RESPOND IN ENGLISH. All explanations must be in English.
             return {
                 "success": True,
                 "is_correct": False,
-                "message": f"❌ Wrong. You selected '{selected_article}'.\n\n✅ **Correct answer:** {self.correct_article} {self.current_noun}\n\n💬 {self.explanation}\n\n📊 Score: {self.score}/{self.attempts} ({percentage}%)",
+                "message": f"❌ Wrong. You selected '{selected_article}'.\n\n✅ **Correct answer:** {self.correct_article} {self.current_noun}\n\n📖 **Meaning:** {self.meaning}\n\n💬 **{self.explanation}**\n\n📝 **Example:**\n🇩🇪 {self.example_sentence}\n🇬🇧 {self.example_translation}\n\n📊 Score: {self.score}/{self.attempts} ({percentage}%)",
                 "correct_answer": f"{self.correct_article} {self.current_noun}"
             }
 
@@ -221,13 +240,13 @@ RESPOND IN ENGLISH. All explanations must be in English.
 
         hints = []
 
-        # Hint 1: The case
+        # Hint 1: The meaning
         if self.hint_level >= 1:
-            hints.append(f"🔹 **Case:** {self.case}")
+            hints.append(f"🔹 **Meaning:** {self.meaning}")
 
-        # Hint 2: Context sentence
+        # Hint 2: The case
         if self.hint_level >= 2:
-            hints.append(f"🔹 **Context:** {self.context_sentence}")
+            hints.append(f"🔹 **Case:** {self.case}")
 
         # Hint 3: First letter of article
         if self.hint_level >= 3:
@@ -237,7 +256,7 @@ RESPOND IN ENGLISH. All explanations must be in English.
         if self.hint_level >= 4:
             return {
                 "success": True,
-                "message": f"💡 **Full answer:** {self.correct_article} {self.current_noun}",
+                "message": f"💡 **Full answer:** {self.correct_article} {self.current_noun}\n\n📝 **Example:**\n🇩🇪 {self.example_sentence}\n🇬🇧 {self.example_translation}",
                 "max_hints": True
             }
 
