@@ -6,12 +6,16 @@ from src.ai.datapizza_api import DatapizzaAPI
 from src.functionalities.translation_game import TranslationGameFunctionality
 from src.functionalities.inverse_translation_game import InverseTranslationGameFunctionality
 from src.functionalities.word_selection_game import WordSelectionGameFunctionality
+from src.functionalities.article_selection_game import ArticleSelectionGameFunctionality
+from src.functionalities.fill_blank_game import FillBlankGameFunctionality
+from src.functionalities.error_detection_game import ErrorDetectionGameFunctionality
 
 # Page config
 st.set_page_config(
-    page_title="German Translation Game",
+    page_title="German Learning Games",
     page_icon="🇩🇪",
-    layout="centered"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Initialize session state
@@ -35,6 +39,10 @@ if 'available_words' not in st.session_state:
     st.session_state.available_words = []
 if 'selected_words' not in st.session_state:
     st.session_state.selected_words = []
+if 'available_articles' not in st.session_state:
+    st.session_state.available_articles = []
+if 'case_info' not in st.session_state:
+    st.session_state.case_info = None
 
 def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:str, game_mode:str) -> bool:
     """
@@ -67,12 +75,22 @@ def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:s
         # Choose game type based on mode
         if game_mode == "English → German":
             game = InverseTranslationGameFunctionality(api=api)
+            game.start_game(difficulty=(min_diff, max_diff), tense=tense)
         elif game_mode == "Word Selection (EN → DE)":
             game = WordSelectionGameFunctionality(api=api)
+            game.start_game(difficulty=(min_diff, max_diff), tense=tense)
+        elif game_mode == "Article Selection (der/die/das)":
+            game = ArticleSelectionGameFunctionality(api=api)
+            game.start_game(difficulty=(min_diff, max_diff))
+        elif game_mode == "Fill-in-the-Blank":
+            game = FillBlankGameFunctionality(api=api)
+            game.start_game(difficulty=(min_diff, max_diff), tense=tense)
+        elif game_mode == "Error Detection":
+            game = ErrorDetectionGameFunctionality(api=api)
+            game.start_game(difficulty=(min_diff, max_diff), tense=tense)
         else:  # German → English
             game = TranslationGameFunctionality(api=api)
-        
-        game.start_game(difficulty=(min_diff, max_diff), tense=tense)
+            game.start_game(difficulty=(min_diff, max_diff), tense=tense)
         
         st.session_state.api = api
         st.session_state.game = game
@@ -85,21 +103,30 @@ def initialize_game(min_diff:int, max_diff:int, tense:str, provider:str, model:s
         return False
 
 def get_next_sentence() -> bool:
-    """Get next sentence from game.
+    """Get next sentence/exercise from game.
 
     Returns:
-        True if next sentence fetched successfully, False otherwise
+        True if next exercise fetched successfully, False otherwise
     """
     if st.session_state.game:
-        result = st.session_state.game.next_sentence()
+        # Article Selection and Fill Blank use next_exercise() instead of next_sentence()
+        if st.session_state.game_mode in ["Article Selection (der/die/das)", "Fill-in-the-Blank", "Error Detection"]:
+            result = st.session_state.game.next_exercise()
+        else:
+            result = st.session_state.game.next_sentence()
+
         if result.get('success'):
-            # For word selection game, handle differently
+            # Handle different game types
             if st.session_state.game_mode == "Word Selection (EN → DE)":
                 st.session_state.current_sentence = result['english_sentence']
                 st.session_state.available_words = result['all_words']
                 st.session_state.selected_words = []
+            elif st.session_state.game_mode == "Article Selection (der/die/das)":
+                st.session_state.current_sentence = result['noun']
+                st.session_state.available_articles = result['articles']
+                st.session_state.case_info = result.get('case')
             else:
-                st.session_state.current_sentence = result['sentence']
+                st.session_state.current_sentence = result.get('sentence')
 
             st.session_state.waiting_for_answer = True
             st.session_state.feedback = None
@@ -140,7 +167,6 @@ def check_answer(user_translation: str) -> bool:
         return result.get('is_correct', False)
     return False
 
-
 def check_word_selection() -> bool:
     """Check user's word selection for word selection game.
 
@@ -154,21 +180,51 @@ def check_word_selection() -> bool:
         return result.get('is_correct', False)
     return False
 
+def check_article_selection(selected_article: str) -> bool:
+    """Check user's article selection for article selection game.
+
+    Args:
+        selected_article: Article selected by user
+
+    Returns:
+        True if article selection is correct, False otherwise
+    """
+    if st.session_state.game and selected_article:
+        result = st.session_state.game.check_article_selection(selected_article)
+        st.session_state.feedback = result
+        st.session_state.waiting_for_answer = False
+        return result.get('is_correct', False)
+    return False
+
 # Main UI
-st.title("🇩🇪 German Translation Game")
-st.markdown("Practice translating German sentences with multiple game modes!")
+st.title("🇩🇪 German Learning Games")
+st.markdown("Master German with 6 interactive game modes!")
 
 # Sidebar - Settings
 with st.sidebar:
-    st.header("⚙️ Settings")
-    
+    st.header("⚙️ Game Settings")
+
     # Game Mode
-    st.subheader("🎮 Game Mode")
-    game_mode = st.radio(
-        "Translation direction",
-        ["German → English", "English → German", "Word Selection (EN → DE)"],
+    st.subheader("🎮 Select Game Mode")
+    game_mode = st.selectbox(
+        "Choose a game",
+        [
+            "--- Translation Games ---",
+            "German → English",
+            "English → German",
+            "--- Interactive Games ---",
+            "Word Selection (EN → DE)",
+            "Article Selection (der/die/das)",
+            "Fill-in-the-Blank",
+            "Error Detection"
+        ],
         key="game_mode_selector"
     )
+
+    # Filter out section headers
+    if game_mode.startswith("---"):
+        st.warning("Please select a game mode from the list")
+        game_mode = None
     
     # Difficulty
     st.subheader("Difficulty Level")
@@ -178,13 +234,16 @@ with st.sidebar:
     if min_difficulty > max_difficulty:
         st.warning("Min should be ≤ Max")
     
-    # Tense
-    st.subheader("Verb Tense")
-    tense = st.selectbox(
-        "Select tense",
-        ["Präsens", "Präteritum", "Perfekt", "Konjunktiv II", "Futur"],
-        key="tense"
-    )
+    # Tense (only for games that use it)
+    if game_mode and game_mode not in ["Article Selection (der/die/das)"]:
+        st.subheader("⏰ Verb Tense")
+        tense = st.selectbox(
+            "Select tense",
+            ["Präsens", "Präteritum", "Perfekt", "Konjunktiv II", "Futur"],
+            key="tense"
+        )
+    else:
+        tense = "Präsens"  # Default for games that don't use tense
     
     # Provider
     st.subheader("AI Provider")
@@ -244,32 +303,53 @@ with st.sidebar:
 if st.session_state.game is None:
     st.info("👈 Configure settings and click 'Start New Game' to begin!")
     st.markdown("""
-    ### How to play:
-    1. Choose your game mode:
-       - **German → English**: Type the English translation
-       - **English → German**: Type the German translation
-       - **Word Selection (EN → DE)**: Select German words in order
+    ### 🎮 Available Game Modes:
+
+    **Translation Games:**
+    - **German → English**: Type English translations of German sentences
+    - **English → German**: Type German translations of English sentences
+
+    **Interactive Games:**
+    - **Word Selection**: Build German sentences by selecting words in order
+    - **Article Selection**: Choose the correct article (der/die/das) with different cases
+    - **Fill-in-the-Blank**: Complete German sentences with missing words
+    - **Error Detection**: Find and correct errors in German sentences
+
+    ### 📝 How to Start:
+    1. Select a game mode from the dropdown above
     2. Set your difficulty level (1=easiest, 5=hardest)
-    3. Choose a verb tense to practice
+    3. Choose a verb tense (if applicable)
     4. Click 'Start New Game'
-    5. Get immediate feedback!
+    5. Practice and get immediate AI feedback!
 
     **Tips:**
     - Start with difficulty 1-2 if you're a beginner
-    - Use Präsens (present tense) for easier practice
-    - Try Word Selection mode for a fun challenge!
-    - The game continues until you stop it!
+    - Article Selection is great for mastering der/die/das
+    - Use hints if you get stuck (💡 button)
+    - Track your progress in the sidebar!
     """)
 
 elif st.session_state.current_sentence:
-    # Display current sentence
-    st.markdown("### Translate this sentence:")
+    # Display exercise with appropriate title based on game mode
+    if st.session_state.game_mode == "Article Selection (der/die/das)":
+        st.markdown("### Choose the correct article:")
+    elif st.session_state.game_mode == "Fill-in-the-Blank":
+        st.markdown("### Fill in the blank:")
+    elif st.session_state.game_mode == "Error Detection":
+        st.markdown("### Find and correct the error:")
+    else:
+        st.markdown("### Translate this sentence:")
 
-    # Show appropriate flag based on game mode
+    # Show appropriate flag/text based on game mode
     if st.session_state.game_mode == "English → German":
         st.markdown(f"## 🇬🇧 {st.session_state.current_sentence}")
     elif st.session_state.game_mode == "Word Selection (EN → DE)":
         st.markdown(f"## 🇬🇧 {st.session_state.current_sentence}")
+    elif st.session_state.game_mode in ["Fill-in-the-Blank", "Error Detection"]:
+        st.markdown(f"## 🇩🇪 {st.session_state.current_sentence}")
+    elif st.session_state.game_mode == "Article Selection (der/die/das)":
+        # Don't show the noun here, it's shown in the article selection UI
+        pass
     else:
         st.markdown(f"## 🇩🇪 {st.session_state.current_sentence}")
 
@@ -337,8 +417,43 @@ elif st.session_state.current_sentence:
                 is_correct = check_word_selection()
                 st.rerun()
 
+    # Article Selection Game UI
+    elif st.session_state.game_mode == "Article Selection (der/die/das)" and st.session_state.waiting_for_answer:
+        # Show hint if available
+        if st.session_state.hint_message:
+            st.info(st.session_state.hint_message)
+
+        # Hint button
+        if st.button("💡 Get Hint", use_container_width=True, key="article_hint_btn"):
+            get_hint()
+            st.rerun()
+
+        st.markdown("---")
+
+        # Prominently display the case with color-coding
+        if st.session_state.case_info:
+            case_colors = {
+                "Nominativ": "🟦",
+                "Akkusativ": "🟩",
+                "Dativ": "🟨",
+                "Genitiv": "🟥"
+            }
+            case_icon = case_colors.get(st.session_state.case_info, "📘")
+            st.info(f"### {case_icon} **Case: {st.session_state.case_info}** {case_icon}")
+
+        st.markdown(f"### Select the correct article for: **{st.session_state.current_sentence}**")
+        st.markdown("**Choose the correct article:**")
+
+        # Display articles as large buttons in a row
+        cols = st.columns(len(st.session_state.available_articles))
+        for idx, article in enumerate(st.session_state.available_articles):
+            with cols[idx]:
+                if st.button(article, key=f"article_{idx}", use_container_width=True, type="primary"):
+                    is_correct = check_article_selection(article)
+                    st.rerun()
+
     # Input area for text-based games
-    elif st.session_state.waiting_for_answer and st.session_state.game_mode != "Word Selection (EN → DE)":
+    elif st.session_state.waiting_for_answer and st.session_state.game_mode not in ["Word Selection (EN → DE)", "Article Selection (der/die/das)"]:
         # Show hint if available
         if st.session_state.hint_message:
             st.info(st.session_state.hint_message)
@@ -352,20 +467,27 @@ elif st.session_state.current_sentence:
         
         # Show input form
         with st.form(key="translation_form", clear_on_submit=True):
+            # Set labels and placeholders based on game mode
             if st.session_state.game_mode == "English → German":
                 label = "Your German translation:"
                 placeholder = "Schreibe deine Übersetzung hier..."
-            else:
+            elif st.session_state.game_mode == "Fill-in-the-Blank":
+                label = "Fill in the blank:"
+                placeholder = "Type the missing word..."
+            elif st.session_state.game_mode == "Error Detection":
+                label = "Type the corrected sentence:"
+                placeholder = "Schreibe den korrigierten Satz..."
+            else:  # German → English
                 label = "Your English translation:"
                 placeholder = "Type your translation here..."
-            
+
             user_translation = st.text_input(
                 label,
                 key="input_field",
                 placeholder=placeholder
             )
             submit = st.form_submit_button("✅ Check Answer", use_container_width=True)
-            
+
             if submit and user_translation:
                 is_correct = check_answer(user_translation)
                 st.rerun()
