@@ -3,6 +3,7 @@ annotated-types==0.7.0
 anyio==4.11.0
 attrs==25.4.0
 blinker==1.9.0
+Flask==3.0.3
 cachetools==6.2.1
 certifi==2025.10.5
 charset-normalizer==3.4.4
@@ -20,6 +21,7 @@ GitPython==3.1.45
 google-auth==2.41.1
 google-genai==1.45.0
 grpcio==1.75.1
+gunicorn==23.0.0
 h11==0.16.0
 h2==4.3.0
 hpack==4.1.0

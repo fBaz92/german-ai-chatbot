@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>German Learning Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <div class="background-accent"></div>
+    <div class="app-wrapper">
+      <header class="container hero">
+        <div>
+          <p class="eyebrow">AI-powered practice</p>
+          <h1>German Learning Games</h1>
+          <p class="lead">
+            Switch between nine interactive modes powered by your preferred AI provider. Built
+            to feel snappy on phones and beautiful on desktop.
+          </p>
+        </div>
+        <div class="hero-card">
+          <p class="hero-score">Level up your 🇩🇪 skills with real-time feedback.</p>
+          <ul>
+            <li>Responsive layout tuned for touch + keyboard</li>
+            <li>Hints, explanations, and instant score tracking</li>
+            <li>Runs inside a single lightweight Flask container</li>
+          </ul>
+        </div>
+      </header>
+
+      <main class="container app-grid">
+        <section class="panel settings-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Session setup</p>
+              <h2>Game Controls</h2>
+            </div>
+          </div>
+          <form id="settings-form" class="settings-form">
+            <label for="game-mode">Game mode</label>
+            <select id="game-mode" name="gameMode" required></select>
+
+            <div class="form-row">
+              <div>
+                <label for="min-difficulty">Min difficulty</label>
+                <input type="range" id="min-difficulty" name="minDifficulty" min="1" max="5" value="1" />
+                <span class="range-value" data-min-difficulty>1</span>
+              </div>
+              <div>
+                <label for="max-difficulty">Max difficulty</label>
+                <input type="range" id="max-difficulty" name="maxDifficulty" min="1" max="5" value="3" />
+                <span class="range-value" data-max-difficulty>3</span>
+              </div>
+            </div>
+
+            <label for="tense">Verb tense</label>
+            <select id="tense" name="tense"></select>
+
+            <fieldset class="provider-fieldset">
+              <legend>AI provider</legend>
+              <div class="provider-options" data-provider-options></div>
+            </fieldset>
+
+            <label for="model">Model</label>
+            <select id="model" name="model"></select>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Start game</button>
+              <button type="button" class="btn ghost" data-action="reset">Reset</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel game-panel">
+          <div class="panel-header space-between">
+            <div>
+              <p class="eyebrow">Playground</p>
+              <h2>Interactive Arena</h2>
+            </div>
+            <span class="mode-badge" data-mode-badge>Choose a game</span>
+          </div>
+
+          <div class="game-state">
+            <div>
+              <p class="label">Status</p>
+              <p class="value" data-status-text>Idle – configure a session to begin.</p>
+            </div>
+            <div class="game-actions">
+              <button class="btn subtle" data-action="hint" disabled>Hint</button>
+              <button class="btn subtle" data-action="next" disabled>Next</button>
+            </div>
+          </div>
+
+          <div class="loading-indicator" data-loading hidden>
+            <span class="spinner"></span>
+            <p>Talking with the tutor...</p>
+          </div>
+
+          <div class="game-card" data-game-content>
+            <div class="placeholder">
+              <h3>Ready when you are</h3>
+              <p>Pick a mode on the left and press “Start game” to load your first exercise.</p>
+            </div>
+          </div>
+
+          <div class="feedback-card" data-feedback hidden></div>
+          <div class="alert" data-system-message hidden></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

@@ -4,7 +4,7 @@ services:
   app:
     build: .
     ports:
-      - "8505:8501"
+      - "8505:8000"
     env_file:
       - .env
     volumes:
