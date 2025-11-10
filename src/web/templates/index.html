@@ -35,47 +35,65 @@
       </header>
 
       <main class="container app-grid">
-        <section class="panel settings-panel">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Session setup</p>
-              <h2>Game Controls</h2>
-            </div>
-          </div>
-          <form id="settings-form" class="settings-form">
-            <label for="game-mode">Game mode</label>
-            <select id="game-mode" name="gameMode" required></select>
-
-            <div class="form-row">
+        <div class="stack-column">
+          <section class="panel settings-panel">
+            <div class="panel-header">
               <div>
-                <label for="min-difficulty">Min difficulty</label>
-                <input type="range" id="min-difficulty" name="minDifficulty" min="1" max="5" value="1" />
-                <span class="range-value" data-min-difficulty>1</span>
-              </div>
-              <div>
-                <label for="max-difficulty">Max difficulty</label>
-                <input type="range" id="max-difficulty" name="maxDifficulty" min="1" max="5" value="3" />
-                <span class="range-value" data-max-difficulty>3</span>
+                <p class="eyebrow">Session setup</p>
+                <h2>Game Controls</h2>
               </div>
             </div>
+            <form id="settings-form" class="settings-form">
+              <label for="game-mode">Game mode</label>
+              <select id="game-mode" name="gameMode" required></select>
 
-            <label for="tense">Verb tense</label>
-            <select id="tense" name="tense"></select>
+              <div class="form-row">
+                <div>
+                  <label for="min-difficulty">Min difficulty</label>
+                  <input type="range" id="min-difficulty" name="minDifficulty" min="1" max="5" value="1" />
+                  <span class="range-value" data-min-difficulty>1</span>
+                </div>
+                <div>
+                  <label for="max-difficulty">Max difficulty</label>
+                  <input type="range" id="max-difficulty" name="maxDifficulty" min="1" max="5" value="3" />
+                  <span class="range-value" data-max-difficulty>3</span>
+                </div>
+              </div>
 
-            <fieldset class="provider-fieldset">
-              <legend>AI provider</legend>
-              <div class="provider-options" data-provider-options></div>
-            </fieldset>
+              <label for="tense">Verb tense</label>
+              <select id="tense" name="tense"></select>
 
-            <label for="model">Model</label>
-            <select id="model" name="model"></select>
+              <fieldset class="provider-fieldset">
+                <legend>AI provider</legend>
+                <div class="provider-options" data-provider-options></div>
+              </fieldset>
 
-            <div class="form-actions">
-              <button type="submit" class="btn primary">Start game</button>
-              <button type="button" class="btn ghost" data-action="reset">Reset</button>
+              <label for="model">Model</label>
+              <select id="model" name="model"></select>
+
+              <div class="form-actions">
+                <button type="submit" class="btn primary">Start game</button>
+                <button type="button" class="btn ghost" data-action="reset">Reset</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel stats-panel">
+            <div class="panel-header space-between">
+              <div>
+                <p class="eyebrow">Insights</p>
+                <h2>Error Radar</h2>
+              </div>
+              <button class="btn subtle" type="button" data-action="refresh-stats">Refresh</button>
             </div>
-          </form>
-        </section>
+            <div class="stats-body" data-stats>
+              <div class="placeholder">
+                <h3>No data yet</h3>
+                <p>Connect a PostgreSQL database via <code>DATABASE_URL</code> to unlock mistake tracking.</p>
+              </div>
+            </div>
+          </section>
+        </div>
 
         <section class="panel game-panel">
           <div class="panel-header space-between">

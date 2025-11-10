@@ -4,13 +4,15 @@ from __future__ import annotations
 import os
 from flask import Flask
 
+from src.web.database import StatsRepository
 from src.web.game_service import GameService
 from src.web.routes import register_routes
 from src.web.session_store import SessionStore
 
 
 session_store = SessionStore()
-game_service = GameService(session_store)
+stats_repository = StatsRepository()
+game_service = GameService(session_store, stats_repository)
 
 
 def create_app() -> Flask:

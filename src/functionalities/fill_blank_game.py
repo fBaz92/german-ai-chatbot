@@ -36,6 +36,8 @@ class FillBlankGameFunctionality(Functionality):
         self.attempts = 0
         self.game_active = False
         self.hint_level = 0
+        self.focus_item = None
+        self.current_verb = None
 
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -76,8 +78,12 @@ class FillBlankGameFunctionality(Functionality):
                 "error": "API not configured. Use DatapizzaAPI."
             }
 
+        focus_verb = None
+        if self.focus_item and self.focus_item.get("item_type") == "verb":
+            focus_verb = self.verb_loader.get_verb_by_name(self.focus_item.get("item_key", ""))
+
         # Get random verb
-        verb = self.verb_loader.get_random_verb(
+        verb = focus_verb or self.verb_loader.get_random_verb(
             min_freq=self.difficulty_range[0],
             max_freq=self.difficulty_range[1]
         )
@@ -133,8 +139,10 @@ RESPOND IN ENGLISH. All hints and explanations must be in English.
                 self.hint_text = exercise_data.hint
                 self.english_translation = exercise_data.english_translation
                 self.explanation = exercise_data.explanation
+                self.current_verb = verb['Verbo']
 
                 self.hint_level = 0
+                self.focus_item = None
 
                 return {
                     "success": True,

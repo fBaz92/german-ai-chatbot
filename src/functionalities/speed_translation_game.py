@@ -45,6 +45,7 @@ class SpeedTranslationGameFunctionality(Functionality):
         self.combo = 0  # Consecutive correct answers
         self.max_combo = 0
         self.total_time_bonus = 0
+        self.focus_item = None
 
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -111,6 +112,11 @@ Guidelines:
 
 RESPOND IN ENGLISH.
 """
+        if self.focus_item and self.focus_item.get("item_type") == "phrase":
+            prompt += f"""
+High-priority phrase to recycle: "{self.focus_item.get('item_key')}".
+Use this exact phrase (or a minimal variation that keeps the same meaning) for the current exercise so the learner can re-practice it.
+"""
 
         try:
             response = self.api.client.structured_response(
@@ -128,6 +134,7 @@ RESPOND IN ENGLISH.
                 self.category = exercise_data.category
                 self.time_limit = self.TIME_LIMITS.get(self.difficulty, 10)
                 self.start_time = time.time()
+                self.focus_item = None
 
                 return {
                     "success": True,

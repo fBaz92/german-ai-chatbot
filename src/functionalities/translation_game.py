@@ -34,6 +34,7 @@ class TranslationGameFunctionality(Functionality):
         self.tense = "Präsens"
         self.game_active = False
         self.hint_level = 0  # Track how many hints given for current sentence
+        self.focus_item = None  # Optional focus verb from stats
     
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -74,8 +75,12 @@ class TranslationGameFunctionality(Functionality):
                 "error": "API not configured. Use DatapizzaAPI."
             }
         
-        # Get random verb
-        verb = self.verb_loader.get_random_verb(
+        focus_verb = None
+        if self.focus_item and self.focus_item.get("item_type") == "verb":
+            focus_verb = self.verb_loader.get_verb_by_name(self.focus_item.get("item_key", ""))
+
+        # Get random verb (prefer focus verb if available)
+        verb = focus_verb or self.verb_loader.get_random_verb(
             min_freq=self.difficulty_range[0],
             max_freq=self.difficulty_range[1]
         )
@@ -132,6 +137,7 @@ IMPORTANT: Respond in ENGLISH. The explanation and translation must be in Englis
             self.current_verb_german = verb['Verbo']  # German verb
             self.current_verb_english = verb['English']  # English verb (for hints!)
             self.hint_level = 0  # Reset hint counter
+            self.focus_item = None  # Clear focus after use
             
             return {
                 "success": True,
@@ -533,4 +539,3 @@ Example:
   > I eat an apple
   ✅ Correct!
 """
-

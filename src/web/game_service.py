@@ -14,6 +14,7 @@ from src.functionalities.translation_game import TranslationGameFunctionality
 from src.functionalities.verb_conjugation_game import VerbConjugationGameFunctionality
 from src.functionalities.word_selection_game import WordSelectionGameFunctionality
 from src.web import config
+from src.web.database import StatsRepository
 from src.web.session_store import SessionData, SessionStore
 
 
@@ -58,8 +59,9 @@ GAME_UI_TYPES = {
 class GameService:
     """Encapsulates orchestration between HTTP routes and game classes."""
 
-    def __init__(self, session_store: SessionStore):
+    def __init__(self, session_store: SessionStore, stats_repository: Optional[StatsRepository] = None):
         self.session_store = session_store
+        self.stats = stats_repository
 
     @staticmethod
     def get_ui_config() -> Dict[str, Any]:
@@ -114,6 +116,9 @@ class GameService:
         if not session.game:
             return {"success": False, "error": "No active game."}
 
+        focus_item = self.stats.get_focus_item(session.game_mode) if self.stats else None
+        self._apply_focus_item(session.game, focus_item)
+
         try:
             if session.game_mode in NEXT_EXERCISE_GAMES:
                 result = session.game.next_exercise()
@@ -165,6 +170,8 @@ class GameService:
         session.waiting_for_answer = False
         session.feedback = result
         self.session_store.touch(session)
+
+        self._record_attempt(session, result)
 
         response: Dict[str, Any] = {"success": True, "feedback": result}
 
@@ -333,6 +340,12 @@ class GameService:
 
         return {"type": "unknown", "raw": result}
 
+    def get_stats_payload(self) -> Dict[str, Any]:
+        """Expose stats dashboard data to the API."""
+        if not self.stats:
+            return {"available": False, "summary": [], "topMistakes": {}}
+        return self.stats.get_dashboard()
+
     @staticmethod
     def _build_api_client(provider: str, model: Optional[str]) -> DatapizzaAPI:
         """Create the DatapizzaAPI client based on provider settings."""
@@ -345,3 +358,71 @@ class GameService:
 
         # Default to local Ollama
         return DatapizzaAPI(provider="ollama", base_url="http://localhost:11434/v1", model=model)
+
+    def _apply_focus_item(self, game: Any, focus_item: Optional[Dict[str, Any]]) -> None:
+        """Attach focus metadata to the current game instance."""
+        if not game:
+            return
+
+        if focus_item:
+            setattr(game, "focus_item", focus_item)
+        elif hasattr(game, "focus_item"):
+            setattr(game, "focus_item", None)
+
+    def _record_attempt(self, session: SessionData, result: Dict[str, Any]) -> None:
+        """Send attempt outcome to the stats repository."""
+        if not self.stats or not self.stats.is_available() or not session.game or "is_correct" not in result:
+            return
+
+        info = self._extract_item_info(session)
+        if not info:
+            return
+
+        self.stats.record_attempt(
+            session.game_mode,
+            info["item_key"],
+            info["item_display"],
+            info["item_type"],
+            bool(result.get("is_correct")),
+        )
+
+    def _extract_item_info(self, session: SessionData) -> Optional[Dict[str, str]]:
+        """Infer the tracked item (verb/noun/etc.) from the active game."""
+        game = session.game
+        if not game:
+            return None
+
+        mode = session.game_mode
+
+        if mode in {
+            "German → English",
+            "English → German",
+            "Word Selection (EN → DE)",
+            "Fill-in-the-Blank",
+            "Error Detection",
+            "Verb Conjugation Challenge",
+        }:
+            verb = (
+                getattr(game, "current_verb_german", None)
+                or getattr(game, "current_verb", None)
+                or getattr(game, "current_infinitive", None)
+            )
+            if verb:
+                return {"item_key": verb, "item_display": verb, "item_type": "verb"}
+
+        if mode == "Article Selection (der/die/das)":
+            noun = getattr(game, "current_noun", None)
+            if noun:
+                return {"item_key": noun, "item_display": noun, "item_type": "noun"}
+
+        if mode == "Speed Translation Race":
+            phrase = getattr(game, "current_phrase", None)
+            if phrase:
+                return {"item_key": phrase, "item_display": phrase, "item_type": "phrase"}
+
+        if mode == "Conversation Builder":
+            scenario = getattr(game, "scenario", None)
+            if scenario:
+                return {"item_key": scenario, "item_display": scenario, "item_type": "scenario"}
+
+        return None

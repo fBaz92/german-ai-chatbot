@@ -39,6 +39,7 @@ class ArticleSelectionGameFunctionality(Functionality):
         self.game_active = False
         self.hint_level = 0
         self.case = None
+        self.focus_item = None
 
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -77,8 +78,12 @@ class ArticleSelectionGameFunctionality(Functionality):
                 "error": "API not configured. Use DatapizzaAPI."
             }
 
+        focus_noun = None
+        if self.focus_item and self.focus_item.get("item_type") == "noun":
+            focus_noun = self.noun_loader.get_noun_by_name(self.focus_item.get("item_key", ""))
+
         # Get random noun
-        noun = self.noun_loader.get_random_noun(
+        noun = focus_noun or self.noun_loader.get_random_noun(
             min_freq=self.difficulty_range[0],
             max_freq=self.difficulty_range[1]
         )
@@ -164,6 +169,7 @@ RESPOND IN ENGLISH. All explanations must be in English.
                 random.shuffle(self.all_articles)
 
                 self.hint_level = 0
+                self.focus_item = None
 
                 return {
                     "success": True,

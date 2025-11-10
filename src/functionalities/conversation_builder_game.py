@@ -41,6 +41,7 @@ class ConversationBuilderGameFunctionality(Functionality):
         self.game_active = False
         self.scenario = None
         self.difficulty_range = (1, 5)
+        self.focus_item = None
 
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -80,7 +81,10 @@ class ConversationBuilderGameFunctionality(Functionality):
             }
 
         import random
-        scenario = random.choice(self.SCENARIOS)
+        if self.focus_item and self.focus_item.get("item_type") == "scenario":
+            scenario = self.focus_item.get("item_key")
+        else:
+            scenario = random.choice(self.SCENARIOS)
 
         # Generate conversation using AI
         prompt = f"""
@@ -138,6 +142,7 @@ RESPOND IN ENGLISH for explanations, German for dialogue.
                 self.scenario = conversation_data.scenario
                 self.current_turn_index = 0
                 self.conversation_history = []
+                self.focus_item = None
 
                 return {
                     "success": True,

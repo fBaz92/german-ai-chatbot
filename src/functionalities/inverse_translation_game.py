@@ -30,6 +30,7 @@ class InverseTranslationGameFunctionality(Functionality):
         self.tense = "Präsens"
         self.game_active = False
         self.hint_level = 0  # Track how many hints given for current sentence
+        self.focus_item = None
     
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -64,8 +65,11 @@ class InverseTranslationGameFunctionality(Functionality):
                 "error": "API not configured. Use DatapizzaAPI."
             }
 
-        
-        verb = self.verb_loader.get_random_verb(
+        focus_verb = None
+        if self.focus_item and self.focus_item.get("item_type") == "verb":
+            focus_verb = self.verb_loader.get_verb_by_name(self.focus_item.get("item_key", ""))
+
+        verb = focus_verb or self.verb_loader.get_random_verb(
             min_freq=self.difficulty_range[0],
             max_freq=self.difficulty_range[1]
         )
@@ -122,6 +126,7 @@ IMPORTANT: Respond in ENGLISH. The explanation must be in English, not German.
             self.current_verb_english = verb['English']  # Store English verb
             self.current_case = verb.get('Caso', 'N/A')  # Store case
             self.hint_level = 0  # Reset hint counter
+            self.focus_item = None
             
             return {
                 "success": True,

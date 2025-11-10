@@ -93,4 +93,10 @@ def register_routes(app, session_store: SessionStore, game_service: GameService)
         result = game_service.reset(session)
         return _json_response(result, session, created)
 
+    @bp.route("/api/stats", methods=["GET"])
+    def api_stats():
+        session, created = _get_session()
+        data = game_service.get_stats_payload()
+        return _json_response({"success": True, "stats": data}, session, created)
+
     app.register_blueprint(bp)

@@ -42,6 +42,7 @@ class VerbConjugationGameFunctionality(Functionality):
         self.game_active = False
         self.hint_level = 0
         self.selected_tense = "Präsens"
+        self.focus_item = None
 
     def get_name(self) -> str:
         """Return the name of this functionality."""
@@ -82,8 +83,12 @@ class VerbConjugationGameFunctionality(Functionality):
                 "error": "API not configured. Use DatapizzaAPI."
             }
 
+        focus_verb = None
+        if self.focus_item and self.focus_item.get("item_type") == "verb":
+            focus_verb = self.verb_loader.get_verb_by_name(self.focus_item.get("item_key", ""))
+
         # Get random verb
-        verb = self.verb_loader.get_random_verb(
+        verb = focus_verb or self.verb_loader.get_random_verb(
             min_freq=self.difficulty_range[0],
             max_freq=self.difficulty_range[1]
         )
@@ -147,6 +152,7 @@ RESPOND IN ENGLISH for explanations, but German for the verb forms.
                 self.explanation = exercise_data.explanation
 
                 self.hint_level = 0
+                self.focus_item = None
 
                 return {
                     "success": True,

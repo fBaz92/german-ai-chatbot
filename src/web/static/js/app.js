@@ -1,6 +1,7 @@
 const state = {
   config: null,
   exercise: null,
+  stats: null,
   exerciseSignature: null,
   feedback: null,
   awaitingAnswer: false,
@@ -29,6 +30,8 @@ const selectors = {
   nextBtn: document.querySelector('[data-action="next"]'),
   hintBtn: document.querySelector('[data-action="hint"]'),
   resetBtn: document.querySelector('[data-action="reset"]'),
+  statsContainer: document.querySelector('[data-stats]'),
+  statsRefreshBtn: document.querySelector('[data-action="refresh-stats"]'),
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -79,6 +82,7 @@ async function bootstrap() {
   try {
     await loadConfig();
     await hydrateStatus();
+    loadStats();
   } catch (error) {
     setSystemMessage(error.message || 'Unable to load configuration', 'error');
   }
@@ -89,6 +93,7 @@ function bindFormEvents() {
   selectors.resetBtn?.addEventListener('click', handleReset);
   selectors.nextBtn?.addEventListener('click', handleNext);
   selectors.hintBtn?.addEventListener('click', handleHint);
+  selectors.statsRefreshBtn?.addEventListener('click', () => loadStats(true));
 
   selectors.minRange?.addEventListener('input', () => {
     selectors.minValue.textContent = selectors.minRange.value;
@@ -107,6 +112,27 @@ async function loadConfig() {
   populateTenses(response.config.tenses);
   populateProviders(response.config.providers);
   updateModelOptions();
+}
+
+async function loadStats(showSpinner = false) {
+  if (!selectors.statsContainer) return;
+  if (showSpinner) {
+    selectors.statsContainer.innerHTML = '<p class="label">Refreshing stats…</p>';
+  }
+
+  try {
+    const response = await apiGet('/api/stats');
+    if (response.success) {
+      state.stats = response.stats;
+      renderStats();
+    }
+  } catch (error) {
+    state.stats = {
+      available: false,
+      error: error.message || 'Unable to load stats.',
+    };
+    renderStats();
+  }
 }
 
 function populateGameOptions(options = []) {
@@ -357,6 +383,7 @@ function bindExerciseHandlers(exercise) {
 function render() {
   renderExercise();
   renderFeedback();
+  renderStats();
   updateControls();
 }
 
@@ -622,6 +649,86 @@ function renderFeedback() {
   card.classList.toggle('success', isCorrect);
   card.classList.toggle('error', !isCorrect);
   card.innerHTML = formatMultiline(state.feedback.message || state.feedback.feedback || '');
+}
+
+function renderStats() {
+  const container = selectors.statsContainer;
+  if (!container) return;
+
+  const stats = state.stats;
+  if (!stats) {
+    container.innerHTML = '<p class="label">Play a few rounds to unlock insights.</p>';
+    return;
+  }
+
+  if (!stats.available) {
+    const detail = stats.error || 'Provide DATABASE_URL to enable tracking.';
+    container.innerHTML = `
+      <div class="placeholder">
+        <h3>Tracking disabled</h3>
+        <p>${escapeHtml(detail)}</p>
+      </div>
+    `;
+    return;
+  }
+
+  const summary = stats.summary || [];
+  const summaryHtml = summary.length
+    ? `
+      <div class="stats-summary">
+        ${summary
+          .map((row) => {
+            const attempts = Number(row.attempts) || 0;
+            const correct = Number(row.correct) || 0;
+            const accuracy = attempts ? Math.round((correct / attempts) * 100) : 0;
+            return `
+              <div class="stat-card">
+                <p class="label">${escapeHtml(row.game_mode)}</p>
+                <strong>${attempts}</strong>
+                <p class="label">${accuracy}% accuracy</p>
+              </div>
+            `;
+          })
+          .join('')}
+      </div>
+    `
+    : '<p class="label">No attempts tracked yet.</p>';
+
+  const mistakes = [];
+  Object.entries(stats.topMistakes || {}).forEach(([gameMode, items]) => {
+    items.forEach((item) => {
+      mistakes.push({
+        gameMode,
+        itemKey: item.item_display,
+        wrong: item.wrong_count,
+        correct: item.correct_count,
+        itemType: item.item_type,
+      });
+    });
+  });
+
+  const mistakesHtml = mistakes.length
+    ? `
+      <div class="mistake-list">
+        ${mistakes
+          .slice(0, 5)
+          .map(
+            (item) => `
+            <div class="mistake-item">
+              <header>
+                <span>${escapeHtml(item.itemKey)}</span>
+                <span class="pill">${escapeHtml(item.gameMode)}</span>
+              </header>
+              <p class="label">${item.wrong} wrong • ${item.correct} correct (${escapeHtml(item.itemType)})</p>
+            </div>
+          `
+          )
+          .join('')}
+      </div>
+    `
+    : '<p class="label">No recurring mistakes yet 🎉</p>';
+
+  container.innerHTML = `${summaryHtml}${mistakesHtml}`;
 }
 
 function updateControls() {

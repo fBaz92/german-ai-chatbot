@@ -86,6 +86,12 @@ body {
   align-items: flex-start;
 }
 
+.stack-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .panel {
   background: white;
   border-radius: var(--radius-lg);
@@ -277,6 +283,13 @@ textarea {
   color: var(--color-ink);
 }
 
+.placeholder code {
+  background: rgba(33, 53, 85, 0.08);
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  font-family: 'DM Sans', 'Inter', monospace;
+}
+
 .exercise-header h3 {
   margin-top: 0.2rem;
   font-size: 1.35rem;
@@ -385,6 +398,61 @@ textarea {
   background: rgba(62, 88, 121, 0.1);
   border-color: rgba(62, 88, 121, 0.3);
   color: var(--color-ink);
+}
+
+.stats-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem;
+  background: rgba(33, 53, 85, 0.03);
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 1.35rem;
+  margin-bottom: 0.15rem;
+}
+
+.mistake-list {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mistake-item {
+  border: 1px solid rgba(33, 53, 85, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem;
+}
+
+.mistake-item header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.pill {
+  display: inline-flex;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(33, 53, 85, 0.12);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .mode-badge {
