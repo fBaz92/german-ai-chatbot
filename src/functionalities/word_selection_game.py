@@ -81,6 +81,9 @@ class WordSelectionGameFunctionality(Functionality):
         focus_verb = None
         if self.focus_item and self.focus_item.get("item_type") == "verb":
             focus_verb = self.verb_loader.get_verb_by_name(self.focus_item.get("item_key", ""))
+            focus_tense = (self.focus_item.get("context") or {}).get("tense")
+            if focus_tense:
+                self.tense = focus_tense
 
         # Get random verb
         verb = focus_verb or self.verb_loader.get_random_verb(
@@ -96,27 +99,27 @@ class WordSelectionGameFunctionality(Functionality):
 
         # Generate sentence with words using AI
         prompt = f"""
-Generate an English sentence using the verb "{verb['English']}" ({verb['Verbo']}) in {self.tense}.
-Difficulty level: {verb.get('Frequenza', 3)}/5 (1=easiest, 5=hardest)
+            Generate an English sentence using the verb "{verb['English']}" ({verb['Verbo']}) in {self.tense}.
+            Difficulty level: {verb.get('Frequenza', 3)}/5 (1=easiest, 5=hardest)
 
-Create a natural, everyday sentence that demonstrates proper use of this verb.
+            Create a natural, everyday sentence that demonstrates proper use of this verb.
 
-IMPORTANT INSTRUCTIONS:
-1. Provide the correct German translation as a LIST OF WORDS (split by spaces, keep punctuation attached to words)
-2. Generate 20-30% ADDITIONAL credible but INCORRECT German words as distractors
-   - Distractors should be plausible alternatives (wrong verb forms, wrong articles, wrong nouns, etc.)
-   - Make them challenging but not impossible to distinguish
-   - Examples of good distractors: wrong gender articles (der/die/das), wrong verb conjugations, similar nouns
-3. Explain the grammar briefly in English
+            IMPORTANT INSTRUCTIONS:
+            1. Provide the correct German translation as a LIST OF WORDS (split by spaces, keep punctuation attached to words)
+            2. Generate 20-30% ADDITIONAL credible but INCORRECT German words as distractors
+            - Distractors should be plausible alternatives (wrong verb forms, wrong articles, wrong nouns, etc.)
+            - Make them challenging but not impossible to distinguish
+            - Examples of good distractors: wrong gender articles (der/die/das), wrong verb conjugations, similar nouns
+            3. Explain the grammar briefly in English
 
-Example format:
-- english_sentence: "I eat an apple"
-- correct_words: ["Ich", "esse", "einen", "Apfel"]
-- distractor_words: ["isst", "essen", "ein", "der", "Äpfel", "Birne"]
-- explanation: "Using 'esse' (1st person singular) with accusative article 'einen' for masculine noun"
+            Example format:
+            - english_sentence: "I eat an apple"
+            - correct_words: ["Ich", "esse", "einen", "Apfel"]
+            - distractor_words: ["isst", "essen", "ein", "der", "Äpfel", "Birne"]
+            - explanation: "Using 'esse' (1st person singular) with accusative article 'einen' for masculine noun"
 
-RESPOND IN ENGLISH. The explanation must be in English.
-"""
+            RESPOND IN ENGLISH. The explanation must be in English.
+            """
 
         try:
             response = self.api.client.structured_response(
@@ -286,14 +289,14 @@ RESPOND IN ENGLISH. The explanation must be in English.
         return {
             "success": True,
             "message": f"""
-📊 Your Score:
+                📊 Your Score:
 
-Correct: {self.score}/{self.attempts}
-Accuracy: {percentage}%
-Difficulty: {self.difficulty_range[0]}-{self.difficulty_range[1]}
-Tense: {self.tense}
-""".strip()
-        }
+                Correct: {self.score}/{self.attempts}
+                Accuracy: {percentage}%
+                Difficulty: {self.difficulty_range[0]}-{self.difficulty_range[1]}
+                Tense: {self.tense}
+                """.strip()
+            }
 
     def stop_game(self) -> Dict[str, Any]:
         """

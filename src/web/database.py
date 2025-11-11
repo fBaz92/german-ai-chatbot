@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+import json
 from typing import Any, Dict, List, Optional
 
 from sqlalchemy import create_engine, text
@@ -65,6 +66,7 @@ class StatsRepository:
                 UNIQUE (game_mode, item_key)
             )
             """,
+            "ALTER TABLE mistake_items ADD COLUMN IF NOT EXISTS context JSONB DEFAULT '{}'::jsonb",
         ]
         with self.engine.begin() as conn:
             for stmt in statements:
@@ -83,6 +85,7 @@ class StatsRepository:
         item_display: str,
         item_type: str,
         is_correct: bool,
+        context: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Upsert stats for a single attempt."""
         if not self.engine:
@@ -92,13 +95,14 @@ class StatsRepository:
             """
             INSERT INTO mistake_items (
                 game_mode, item_key, item_display, item_type,
-                wrong_count, correct_count, last_wrong_at, last_correct_at
+                wrong_count, correct_count, last_wrong_at, last_correct_at, context
             ) VALUES (
                 :game_mode, :item_key, :item_display, :item_type,
                 CASE WHEN :is_correct THEN 0 ELSE 1 END,
                 CASE WHEN :is_correct THEN 1 ELSE 0 END,
                 CASE WHEN :is_correct THEN NULL ELSE NOW() END,
-                CASE WHEN :is_correct THEN NOW() ELSE NULL END
+                CASE WHEN :is_correct THEN NOW() ELSE NULL END,
+                COALESCE(CAST(:context_json AS JSONB), '{}'::jsonb)
             )
             ON CONFLICT (game_mode, item_key) DO UPDATE
             SET wrong_count = mistake_items.wrong_count + CASE WHEN EXCLUDED.wrong_count > 0 THEN 1 ELSE 0 END,
@@ -110,7 +114,8 @@ class StatsRepository:
                 last_correct_at = CASE
                     WHEN EXCLUDED.last_correct_at IS NOT NULL THEN EXCLUDED.last_correct_at
                     ELSE mistake_items.last_correct_at
-                END
+                END,
+                context = COALESCE(mistake_items.context, '{}'::jsonb) || COALESCE(EXCLUDED.context, '{}'::jsonb)
             """
         )
 
@@ -120,6 +125,7 @@ class StatsRepository:
             "item_display": item_display,
             "item_type": item_type,
             "is_correct": is_correct,
+            "context_json": json.dumps(context) if context else None,
         }
 
         try:
@@ -135,7 +141,7 @@ class StatsRepository:
 
         query = text(
             """
-            SELECT game_mode, item_key, item_display, item_type, wrong_count, correct_count
+            SELECT game_mode, item_key, item_display, item_type, wrong_count, correct_count, context
             FROM mistake_items
             WHERE game_mode = :game_mode AND wrong_count > 0
             ORDER BY wrong_count DESC, correct_count ASC
@@ -145,7 +151,13 @@ class StatsRepository:
         try:
             with self.engine.begin() as conn:
                 row = conn.execute(query, {"game_mode": game_mode}).mappings().first()
-                return dict(row) if row else None
+                if not row:
+                    return None
+                result = dict(row)
+                context = result.get("context")
+                if isinstance(context, str):
+                    result["context"] = json.loads(context)
+                return result
         except SQLAlchemyError as exc:
             logger.warning("Failed to fetch focus item: %s", exc)
             return None
@@ -153,7 +165,7 @@ class StatsRepository:
     def get_dashboard(self, limit: int = 5) -> Dict[str, Any]:
         """Return summary metrics and top mistakes for display."""
         if not self.engine:
-            return {"available": False, "summary": [], "topMistakes": {}}
+            return {"available": False, "summary": [], "topMistakes": {}, "reviewCount": 0}
 
         summary_sql = text(
             """
@@ -170,28 +182,67 @@ class StatsRepository:
 
         mistakes_sql = text(
             """
-            SELECT game_mode, item_key, item_display, item_type, wrong_count, correct_count
+            SELECT game_mode, item_key, item_display, item_type, wrong_count, correct_count, context
             FROM mistake_items
             WHERE wrong_count > 0
             ORDER BY wrong_count DESC, correct_count ASC
             LIMIT :limit
             """
         )
+        total_sql = text("SELECT COUNT(*) FROM mistake_items WHERE wrong_count > 0")
 
         try:
             with self.engine.begin() as conn:
                 summary_rows = conn.execute(summary_sql).mappings().all()
                 mistakes_rows = conn.execute(mistakes_sql, {"limit": limit}).mappings().all()
+                total_count = conn.execute(total_sql).scalar() or 0
         except SQLAlchemyError as exc:
             logger.warning("Failed to load stats: %s", exc)
-            return {"available": False, "summary": [], "topMistakes": {}}
+            return {"available": False, "summary": [], "topMistakes": {}, "reviewCount": 0}
 
         top_by_game: Dict[str, List[Dict[str, Any]]] = {}
         for row in mistakes_rows:
-            top_by_game.setdefault(row["game_mode"], []).append(dict(row))
+            item = dict(row)
+            context = item.get("context")
+            if isinstance(context, str):
+                item["context"] = json.loads(context)
+            top_by_game.setdefault(item["game_mode"], []).append(item)
 
         return {
             "available": True,
             "summary": [dict(row) for row in summary_rows],
             "topMistakes": top_by_game,
+            "reviewCount": total_count,
         }
+
+    def get_review_items(self, limit: int = 10, game_mode: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Return a queue of mistakes ordered by wrong count."""
+        if not self.engine:
+            return []
+
+        base_query = """
+            SELECT game_mode, item_key, item_display, item_type, wrong_count, correct_count, context
+            FROM mistake_items
+            WHERE wrong_count > 0
+        """
+        if game_mode:
+            base_query += " AND game_mode = :game_mode"
+        base_query += " ORDER BY wrong_count DESC, correct_count ASC LIMIT :limit"
+        query = text(base_query)
+        try:
+            with self.engine.begin() as conn:
+                params = {"limit": limit}
+                if game_mode:
+                    params["game_mode"] = game_mode
+                rows = conn.execute(query, params).mappings().all()
+                results = []
+                for row in rows:
+                    item = dict(row)
+                    context = item.get("context")
+                    if isinstance(context, str):
+                        item["context"] = json.loads(context)
+                    results.append(item)
+                return results
+        except SQLAlchemyError as exc:
+            logger.warning("Failed to load review items: %s", exc)
+            return []

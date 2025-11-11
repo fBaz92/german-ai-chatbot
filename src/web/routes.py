@@ -99,4 +99,16 @@ def register_routes(app, session_store: SessionStore, game_service: GameService)
         data = game_service.get_stats_payload()
         return _json_response({"success": True, "stats": data}, session, created)
 
+    @bp.route("/api/review/items", methods=["GET"])
+    def api_review_items():
+        session, created = _get_session()
+        game_mode = request.args.get("gameMode")
+        limit_arg = request.args.get("limit")
+        try:
+            limit = max(1, min(50, int(limit_arg))) if limit_arg else 10
+        except ValueError:
+            limit = 10
+        data = game_service.get_review_items(game_mode=game_mode, limit=limit)
+        return _json_response({"success": True, "review": data}, session, created)
+
     app.register_blueprint(bp)

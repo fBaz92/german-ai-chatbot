@@ -22,6 +22,9 @@ class SessionData:
     game_mode: Optional[str] = None
     waiting_for_answer: bool = False
     feedback: Optional[Dict[str, Any]] = None
+    pending_focus_item: Optional[Dict[str, Any]] = None
+    review_queue: list = field(default_factory=list)
+    review_active: bool = False
     created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
 

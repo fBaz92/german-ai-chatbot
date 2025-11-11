@@ -84,6 +84,7 @@ class GameService:
         min_diff = int(payload.get("minDifficulty", 1))
         max_diff = int(payload.get("maxDifficulty", 3))
         tense = payload.get("tense", "Präsens")
+        focus_item = payload.get("focusItem")
 
         try:
             api = self._build_api_client(provider, model)
@@ -102,11 +103,15 @@ class GameService:
             return {"success": False, "error": start_result.get("error", "Could not start game.")}
 
         # Persist session state
+        self._apply_focus_item(game, focus_item)
+
         session.api = api
         session.game = game
         session.game_mode = game_mode
         session.waiting_for_answer = False
         session.feedback = None
+        session.pending_focus_item = None
+        session.review_active = bool(payload.get("reviewMode"))
         self.session_store.touch(session)
 
         return self.fetch_next(session)
@@ -115,9 +120,6 @@ class GameService:
         """Fetch the next exercise for the active game."""
         if not session.game:
             return {"success": False, "error": "No active game."}
-
-        focus_item = self.stats.get_focus_item(session.game_mode) if self.stats else None
-        self._apply_focus_item(session.game, focus_item)
 
         try:
             if session.game_mode in NEXT_EXERCISE_GAMES:
@@ -204,6 +206,9 @@ class GameService:
         session.game_mode = None
         session.waiting_for_answer = False
         session.feedback = None
+        session.pending_focus_item = None
+        session.review_queue = []
+        session.review_active = False
         self.session_store.touch(session)
         return {"success": True}
 
@@ -346,6 +351,13 @@ class GameService:
             return {"available": False, "summary": [], "topMistakes": {}}
         return self.stats.get_dashboard()
 
+    def get_review_items(self, game_mode: Optional[str] = None, limit: int = 10) -> Dict[str, Any]:
+        """Return queue of mistakes suitable for review sessions."""
+        if not self.stats or not self.stats.is_available():
+            return {"available": False, "items": []}
+        items = self.stats.get_review_items(limit=limit, game_mode=game_mode)
+        return {"available": bool(items), "items": items}
+
     @staticmethod
     def _build_api_client(provider: str, model: Optional[str]) -> DatapizzaAPI:
         """Create the DatapizzaAPI client based on provider settings."""
@@ -384,6 +396,7 @@ class GameService:
             info["item_display"],
             info["item_type"],
             bool(result.get("is_correct")),
+            context=info.get("context"),
         )
 
     def _extract_item_info(self, session: SessionData) -> Optional[Dict[str, str]]:
@@ -393,6 +406,8 @@ class GameService:
             return None
 
         mode = session.game_mode
+
+        context: Dict[str, Any] = {}
 
         if mode in {
             "German → English",
@@ -408,21 +423,22 @@ class GameService:
                 or getattr(game, "current_infinitive", None)
             )
             if verb:
-                return {"item_key": verb, "item_display": verb, "item_type": "verb"}
+                context["tense"] = getattr(game, "tense", getattr(game, "selected_tense", None))
+                return {"item_key": verb, "item_display": verb, "item_type": "verb", "context": context}
 
         if mode == "Article Selection (der/die/das)":
             noun = getattr(game, "current_noun", None)
             if noun:
-                return {"item_key": noun, "item_display": noun, "item_type": "noun"}
+                return {"item_key": noun, "item_display": noun, "item_type": "noun", "context": context}
 
         if mode == "Speed Translation Race":
             phrase = getattr(game, "current_phrase", None)
             if phrase:
-                return {"item_key": phrase, "item_display": phrase, "item_type": "phrase"}
+                return {"item_key": phrase, "item_display": phrase, "item_type": "phrase", "context": context}
 
         if mode == "Conversation Builder":
             scenario = getattr(game, "scenario", None)
             if scenario:
-                return {"item_key": scenario, "item_display": scenario, "item_type": "scenario"}
+                return {"item_key": scenario, "item_display": scenario, "item_type": "scenario", "context": context}
 
         return None

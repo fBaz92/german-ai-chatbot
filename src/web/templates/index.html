@@ -44,6 +44,22 @@
               </div>
             </div>
             <form id="settings-form" class="settings-form">
+              <label for="data-source">Exercise source</label>
+              <select id="data-source" name="dataSource">
+                <option value="generator">Fresh AI content</option>
+                <option value="review">Past mistakes</option>
+              </select>
+              <div class="review-controls" data-review-controls>
+                <label for="review-pool">Review pool size</label>
+                <select id="review-pool" name="reviewPool">
+                  <option value="5">Top 5 most missed</option>
+                  <option value="10">Top 10 most missed</option>
+                  <option value="15">Top 15 most missed</option>
+                  <option value="20">Top 20 most missed</option>
+                </select>
+                <p class="label" data-review-info>Track mistakes to unlock review mode.</p>
+              </div>
+
               <label for="game-mode">Game mode</label>
               <select id="game-mode" name="gameMode" required></select>
 
@@ -84,7 +100,9 @@
                 <p class="eyebrow">Insights</p>
                 <h2>Error Radar</h2>
               </div>
-              <button class="btn subtle" type="button" data-action="refresh-stats">Refresh</button>
+              <div class="panel-actions">
+                <button class="btn subtle" type="button" data-action="refresh-stats">Refresh</button>
+              </div>
             </div>
             <div class="stats-body" data-stats>
               <div class="placeholder">
@@ -131,6 +149,7 @@
           <div class="alert" data-system-message hidden></div>
         </section>
       </main>
+      <button class="panel-toggle btn ghost" type="button" data-action="toggle-panel">Show controls</button>
     </div>
 
     <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>

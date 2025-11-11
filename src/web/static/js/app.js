@@ -9,6 +9,13 @@ const state = {
   selection: [],
   timerFrame: null,
   timerDeadline: null,
+  panelHidden: false,
+  reviewQueue: [],
+  reviewActive: false,
+  currentReviewItem: null,
+  pendingNextConfirm: false,
+  dataSource: 'generator',
+  reviewAvailableCount: 0,
 };
 
 const selectors = {
@@ -32,10 +39,18 @@ const selectors = {
   resetBtn: document.querySelector('[data-action="reset"]'),
   statsContainer: document.querySelector('[data-stats]'),
   statsRefreshBtn: document.querySelector('[data-action="refresh-stats"]'),
+  panelToggle: document.querySelector('[data-action="toggle-panel"]'),
+  appWrapper: document.querySelector('.app-wrapper'),
+  sourceSelect: document.getElementById('data-source'),
+  reviewPoolSelect: document.getElementById('review-pool'),
+  reviewControls: document.querySelector('[data-review-controls]'),
+  reviewInfo: document.querySelector('[data-review-info]'),
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   bindFormEvents();
+  setPanelHidden(false);
+  bindKeyboardShortcuts();
   bootstrap();
 });
 
@@ -78,6 +93,64 @@ function buildExerciseSignature(exercise) {
   }
 }
 
+function setPanelHidden(hidden) {
+  state.panelHidden = hidden;
+  if (selectors.appWrapper) {
+    selectors.appWrapper.classList.toggle('panel-hidden', hidden);
+  }
+  if (selectors.panelToggle) {
+    selectors.panelToggle.textContent = hidden ? 'Show controls' : 'Hide controls';
+  }
+}
+
+function canUseTranslationShortcuts() {
+  return (
+    !state.loading &&
+    state.exercise &&
+    state.exercise.type === 'translation'
+  );
+}
+
+function shouldHandleArrowEvent(event) {
+  const activeElement = document.activeElement;
+  const editableTags = ['INPUT', 'TEXTAREA'];
+  if (activeElement && editableTags.includes(activeElement.tagName)) {
+    return event.altKey || event.metaKey || event.ctrlKey;
+  }
+  return true;
+}
+
+function handleArrowRightShortcut() {
+  if (!canUseTranslationShortcuts()) return;
+
+  const needsConfirm =
+    state.awaitingAnswer || (state.feedback && !state.feedback.is_correct);
+
+  if (state.reviewActive && state.awaitingAnswer) {
+    // treat same as needsConfirm
+  }
+
+  if (needsConfirm && !state.pendingNextConfirm) {
+    state.pendingNextConfirm = true;
+    setSystemMessage('Would you really want to move to the next question? Press → to confirm, ← to stay.', 'hint');
+    return;
+  }
+
+  state.pendingNextConfirm = false;
+  handleNext();
+}
+
+function handleArrowLeftShortcut() {
+  if (!canUseTranslationShortcuts()) return;
+  if (state.pendingNextConfirm) {
+    state.pendingNextConfirm = false;
+    setSystemMessage('Stayed on the current question.', 'hint');
+    return;
+  }
+  if (state.loading) return;
+  handleHint();
+}
+
 async function bootstrap() {
   try {
     await loadConfig();
@@ -93,7 +166,9 @@ function bindFormEvents() {
   selectors.resetBtn?.addEventListener('click', handleReset);
   selectors.nextBtn?.addEventListener('click', handleNext);
   selectors.hintBtn?.addEventListener('click', handleHint);
+  selectors.panelToggle?.addEventListener('click', () => setPanelHidden(!state.panelHidden));
   selectors.statsRefreshBtn?.addEventListener('click', () => loadStats(true));
+  selectors.sourceSelect?.addEventListener('change', handleSourceChange);
 
   selectors.minRange?.addEventListener('input', () => {
     selectors.minValue.textContent = selectors.minRange.value;
@@ -101,8 +176,25 @@ function bindFormEvents() {
   selectors.maxRange?.addEventListener('input', () => {
     selectors.maxValue.textContent = selectors.maxRange.value;
   });
+
+  state.dataSource = selectors.sourceSelect?.value || 'generator';
+  updateSourceControls();
 }
 
+function bindKeyboardShortcuts() {
+  window.addEventListener('keydown', (event) => {
+    if (!canUseTranslationShortcuts()) return;
+    if (!shouldHandleArrowEvent(event)) return;
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      handleArrowRightShortcut();
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      handleArrowLeftShortcut();
+    }
+  });
+}
 async function loadConfig() {
   const response = await apiGet('/api/config');
   if (!response.success) throw new Error('Could not load configuration');
@@ -124,6 +216,8 @@ async function loadStats(showSpinner = false) {
     const response = await apiGet('/api/stats');
     if (response.success) {
       state.stats = response.stats;
+      state.reviewAvailableCount = response.stats?.reviewCount || 0;
+      updateSourceControls();
       renderStats();
     }
   } catch (error) {
@@ -131,7 +225,22 @@ async function loadStats(showSpinner = false) {
       available: false,
       error: error.message || 'Unable to load stats.',
     };
+    state.reviewAvailableCount = 0;
+    updateSourceControls();
     renderStats();
+  }
+}
+
+async function startReviewQueue(customLimit) {
+  if (state.loading) return;
+  if (state.awaitingAnswer && state.exercise) {
+    setSystemMessage('Finish the current exercise before starting review.', 'error');
+    return;
+  }
+  const limit = customLimit || Number(selectors.reviewPoolSelect?.value) || 5;
+  const success = await initReviewFromSource(null, limit);
+  if (!success) {
+    setSystemMessage('No mistakes available for review.', 'hint');
   }
 }
 
@@ -156,6 +265,14 @@ function populateGameOptions(options = []) {
     });
     selectors.modeSelect.appendChild(group);
   });
+}
+
+function setSelectValue(select, value) {
+  if (!select || !value) return;
+  const match = Array.from(select.options).some((option) => option.value === value);
+  if (match) {
+    select.value = value;
+  }
 }
 
 function populateTenses(tenses = []) {
@@ -215,6 +332,70 @@ function updateModelOptions(providerValue) {
   });
 }
 
+function handleSourceChange() {
+  state.dataSource = selectors.sourceSelect?.value || 'generator';
+  updateSourceControls();
+}
+
+function updateSourceControls() {
+  const hasRecords = state.reviewAvailableCount > 0;
+  const reviewOption = selectors.sourceSelect?.querySelector('option[value="review"]');
+  if (reviewOption) {
+    reviewOption.disabled = !hasRecords;
+  }
+  if (!hasRecords && selectors.sourceSelect && selectors.sourceSelect.value === 'review') {
+    selectors.sourceSelect.value = 'generator';
+    state.dataSource = 'generator';
+  }
+
+  if (selectors.reviewControls) {
+    selectors.reviewControls.classList.toggle('active', state.dataSource === 'review');
+  }
+  if (selectors.reviewPoolSelect) {
+    selectors.reviewPoolSelect.disabled = state.dataSource !== 'review';
+  }
+  if (selectors.reviewInfo) {
+    selectors.reviewInfo.textContent = hasRecords
+      ? `You have ${state.reviewAvailableCount} tracked mistakes.`
+      : 'Track mistakes to unlock review mode.';
+  }
+}
+
+async function fetchReviewItems(gameMode, limit) {
+  const params = new URLSearchParams();
+  if (gameMode) params.append('gameMode', gameMode);
+  if (limit) params.append('limit', limit);
+  const url = params.toString() ? `/api/review/items?${params.toString()}` : '/api/review/items';
+  const response = await apiGet(url);
+  if (!response.success || !response.review.available) {
+    return [];
+  }
+  return response.review.items || [];
+}
+
+async function initReviewFromSource(gameMode, poolSize) {
+  if (!state.reviewAvailableCount) {
+    setSystemMessage('No past mistakes recorded yet.', 'hint');
+    return false;
+  }
+  const queue = await fetchReviewItems(gameMode, poolSize);
+  if (!queue.length) {
+    setSystemMessage('No mistakes found for the selected source.', 'hint');
+    return false;
+  }
+
+  state.reviewQueue = queue.slice();
+  state.reviewActive = true;
+  state.currentReviewItem = null;
+  state.pendingNextConfirm = false;
+  state.dataSource = 'review';
+  if (selectors.sourceSelect) selectors.sourceSelect.value = 'review';
+  updateSourceControls();
+  setSystemMessage(`Review session started (${state.reviewQueue.length} items).`, 'hint');
+  await startNextReviewItem(true);
+  return true;
+}
+
 async function hydrateStatus() {
   const response = await apiGet('/api/status');
   if (!response.success) return;
@@ -230,24 +411,26 @@ async function handleStart(event) {
   if (state.loading) return;
 
   const payload = collectFormPayload();
+  state.dataSource = payload.dataSource;
   if (!payload.gameMode) {
     setSystemMessage('Please choose a game mode before starting.', 'error');
     return;
   }
 
-  state.selection = [];
-  await withLoading(async () => {
-    const data = await apiPost('/api/start', payload);
-    if (!data.success) throw new Error(data.error || 'Unable to start game.');
-    setExercise(data.exercise || null);
-    state.feedback = null;
-    state.awaitingAnswer = !!data.exercise;
-    setSystemMessage('');
-    render();
-  });
+  if (payload.dataSource === 'review') {
+    const success = await initReviewFromSource(payload.gameMode, payload.reviewPoolSize);
+    if (!success) return;
+    return;
+  }
+
+  state.reviewActive = false;
+  state.reviewQueue = [];
+  state.currentReviewItem = null;
+  state.dataSource = 'generator';
+  await startGameWithPayload(payload);
 }
 
-function collectFormPayload() {
+function collectFormPayload(options = {}) {
   const formData = new FormData(selectors.form);
   return {
     gameMode: formData.get('gameMode'),
@@ -256,17 +439,29 @@ function collectFormPayload() {
     tense: formData.get('tense'),
     provider: formData.get('provider'),
     model: formData.get('model'),
+    dataSource: options.overrideSource || formData.get('dataSource') || 'generator',
+    reviewPoolSize: Number(formData.get('reviewPool')) || 5,
   };
 }
 
 async function handleNext() {
   if (state.loading) return;
+  state.pendingNextConfirm = false;
+  if (state.reviewActive) {
+    if (state.awaitingAnswer) {
+      setSystemMessage('Submit your answer before moving to the next review item.', 'error');
+      return;
+    }
+    await startNextReviewItem();
+    return;
+  }
   await withLoading(async () => {
     const data = await apiPost('/api/next');
     if (!data.success) throw new Error(data.error || 'Unable to fetch next exercise.');
     setExercise(data.exercise || null);
     state.feedback = null;
     state.awaitingAnswer = !!data.exercise;
+    state.pendingNextConfirm = false;
     setSystemMessage('');
     render();
   });
@@ -288,10 +483,67 @@ async function handleReset() {
     setExercise(null);
     state.feedback = null;
     state.awaitingAnswer = false;
+    state.reviewActive = false;
+    state.reviewQueue = [];
+    state.currentReviewItem = null;
+    state.pendingNextConfirm = false;
+    state.dataSource = 'generator';
+    if (selectors.sourceSelect) selectors.sourceSelect.value = 'generator';
+    updateSourceControls();
     stopTimer();
     setSystemMessage('Session reset. Configure a new game to continue.', 'hint');
+    setPanelHidden(false);
     render();
   });
+}
+
+async function startGameWithPayload(payload) {
+  state.selection = [];
+  await withLoading(async () => {
+    const data = await apiPost('/api/start', payload);
+    if (!data.success) throw new Error(data.error || 'Unable to start game.');
+    setExercise(data.exercise || null);
+    state.feedback = null;
+    state.awaitingAnswer = !!data.exercise;
+    if (payload.reviewMode) {
+      state.reviewActive = true;
+    }
+    state.pendingNextConfirm = false;
+    setSystemMessage('');
+    setPanelHidden(true);
+    render();
+  });
+}
+
+async function startNextReviewItem(force = false) {
+  if (!state.reviewActive) return;
+  if (!force && state.awaitingAnswer) {
+    setSystemMessage('Submit your answer before moving to the next review item.', 'error');
+    return;
+  }
+  if (!state.reviewQueue.length) {
+    state.reviewActive = false;
+    state.currentReviewItem = null;
+    state.reviewQueue = [];
+    setSystemMessage('Review session complete! 🎉', 'hint');
+    state.dataSource = 'generator';
+    if (selectors.sourceSelect) selectors.sourceSelect.value = 'generator';
+    updateSourceControls();
+    return;
+  }
+
+  const nextItem = state.reviewQueue.shift();
+  state.currentReviewItem = nextItem;
+  const modeLabel = nextItem.game_mode || nextItem.gameMode;
+  setSelectValue(selectors.modeSelect, modeLabel);
+  state.pendingNextConfirm = false;
+
+  const payload = collectFormPayload({ overrideSource: 'generator' });
+  payload.gameMode = modeLabel;
+  payload.focusItem = nextItem;
+  payload.reviewMode = true;
+  await startGameWithPayload(payload);
+  setSystemMessage(`Reviewing ${nextItem.item_display} (${modeLabel})`, 'hint');
 }
 
 async function submitAnswer(payload) {
@@ -301,6 +553,7 @@ async function submitAnswer(payload) {
     if (!data.success) throw new Error(data.error || 'Could not validate answer.');
     state.feedback = data.feedback || null;
     state.awaitingAnswer = false;
+    state.pendingNextConfirm = false;
 
     if (data.conversation) {
       setExercise(data.conversation);
@@ -329,6 +582,20 @@ function bindExerciseHandlers(exercise) {
       submitAnswer({ answer });
       event.target.reset();
     });
+
+    if (exercise.type === 'translation') {
+      const textarea = form?.querySelector('textarea[name="answer"]');
+      textarea?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+          } else {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }
+        }
+      });
+    }
   }
 
   if (exercise.type === 'word-selection') {
@@ -703,6 +970,7 @@ function renderStats() {
         wrong: item.wrong_count,
         correct: item.correct_count,
         itemType: item.item_type,
+        context: item.context || {},
       });
     });
   });
@@ -719,7 +987,9 @@ function renderStats() {
                 <span>${escapeHtml(item.itemKey)}</span>
                 <span class="pill">${escapeHtml(item.gameMode)}</span>
               </header>
-              <p class="label">${item.wrong} wrong • ${item.correct} correct (${escapeHtml(item.itemType)})</p>
+              <p class="label">${item.wrong} wrong • ${item.correct} correct (${escapeHtml(item.itemType)})${
+                item.context?.tense ? ` • ${escapeHtml(item.context.tense)}` : ''
+              }</p>
             </div>
           `
           )
@@ -728,7 +998,11 @@ function renderStats() {
     `
     : '<p class="label">No recurring mistakes yet 🎉</p>';
 
-  container.innerHTML = `${summaryHtml}${mistakesHtml}`;
+  const reviewCountHtml = stats.reviewCount
+    ? `<p class="label">Total mistakes tracked: ${stats.reviewCount}</p>`
+    : '';
+
+  container.innerHTML = `${summaryHtml}${reviewCountHtml}${mistakesHtml}`;
 }
 
 function updateControls() {

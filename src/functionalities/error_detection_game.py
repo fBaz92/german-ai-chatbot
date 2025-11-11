@@ -82,6 +82,9 @@ class ErrorDetectionGameFunctionality(Functionality):
         focus_verb = None
         if self.focus_item and self.focus_item.get("item_type") == "verb":
             focus_verb = self.verb_loader.get_verb_by_name(self.focus_item.get("item_key", ""))
+            focus_tense = (self.focus_item.get("context") or {}).get("tense")
+            if focus_tense:
+                self.tense = focus_tense
 
         # Get random verb
         verb = focus_verb or self.verb_loader.get_random_verb(
