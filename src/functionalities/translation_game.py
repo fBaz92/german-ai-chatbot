@@ -240,6 +240,11 @@ Return a JSON object with:
                 "error": "API not configured."
             }
 
+        # Normalize user's answer: add period if missing
+        user_translation = user_translation.strip()
+        if user_translation and user_translation[-1] not in '.!?':
+            user_translation += '.'
+
         # Validate with AI - pass correct answer explicitly
         validation = self._validate_translation_with_ai(user_translation)
         
